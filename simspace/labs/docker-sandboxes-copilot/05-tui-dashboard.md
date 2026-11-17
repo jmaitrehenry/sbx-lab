@@ -39,7 +39,7 @@ graph LR
 
 Open the TUI by running the following command on your host, outside of any sandbox:
 
-```bash
+```bash id=host
 sbx
 ```
 

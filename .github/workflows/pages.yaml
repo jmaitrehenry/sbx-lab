@@ -51,6 +51,9 @@ jobs:
         run: |
           set -euo pipefail
           node .github/pages/build-instructions.mjs _instructions/labs
+          # Name each code block's header after where it runs (id=host or id=sandbox). This
+          # rewrites the checkout's copy of the simulated lab: the deployed one, not the source.
+          node .github/pages/label-code-blocks.mjs "$LABS_DIR" _instructions/labs
           for dir in "$LABS_DIR" _instructions/labs; do
             docker run --rm \
               -v "$GITHUB_WORKSPACE/$dir:/labs:ro" \
@@ -100,6 +103,17 @@ jobs:
             cp .github/pages/diagram-zoom.js "$site/"
             sed -i 's|</head>|  <script defer src="./diagram-zoom.js"></script>\n  </head>|' "$site/index.html"
             grep -qF 'diagram-zoom.js' "$site/index.html"
+          done
+
+          # / and simspace/ : the icon of the code blocks labelled host or sandbox.
+          for c in code-block-label code-block-label-icon; do
+            grep -qF ".$c{" _site/assets/*.css || { echo "::error::the runtime has no .$c any more: update .github/pages/code-blocks.css"; exit 1; }
+          done
+          grep -qF 'dataFilename' _site/assets/*.js || { echo "::error::the runtime doesn't show filename= any more: update .github/pages/label-code-blocks.mjs"; exit 1; }
+          for site in _site _site/simspace; do
+            cp .github/pages/code-blocks.css "$site/"
+            sed -i 's|</head>|  <link rel="stylesheet" href="./code-blocks.css">\n  </head>|' "$site/index.html"
+            grep -qF 'code-blocks.css' "$site/index.html"
           done
 
           # The root's service worker is scoped to the whole site: keep it off simspace/ (which has

@@ -7,7 +7,8 @@
 //   so the footer is removed.
 // - Code blocks get Run and Copy buttons only when they are something to run or to type (commands,
 //   and prompts for the agent): outputs and file listings get none.
-// - labspace-ui.json carries what the header and the milestones need (labspace-ui.js).
+// - labspace-ui.json carries what the header, the milestones and the code-block labels (host,
+//   sandbox, or the language) need (labspace-ui.js).
 //
 //   node labspace-local/content.mjs <out-dir> [--watch]
 //   node labspace-local/content.mjs --themed-index <out-file> < index.html
@@ -78,8 +79,31 @@ const slug = (title) =>
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-");
 
-// What labspace-ui.js needs: the title, and the sections with their milestones
-export function uiConfig(labspaceYaml, parse) {
+// The code blocks of a section, in the order the interface numbers them (its data-code-index):
+// every fenced block, those inside > quotes and alerts included. For each, the label of its header:
+// where it runs (id=host or id=sandbox) for bash and none blocks, its language otherwise, as the
+// simulated lab shows them.
+export function codeBlocks(markdown) {
+  const blocks = [];
+  let open = false;
+  for (const line of markdown.split("\n")) {
+    const fence = line.match(/^[\s>]*```(.*)$/);
+    if (!fence) continue;
+    if (open) {
+      if (fence[1].trim() === "") open = false;
+      continue;
+    }
+    open = true;
+    const [language = "", ...meta] = fence[1].trim().split(/\s+/);
+    const id = meta.find((m) => m.startsWith("id="))?.slice(3) || null;
+    const shown = language === "sh" || language === "console" ? "bash" : language || "text";
+    blocks.push({ label: id || shown, id });
+  }
+  return blocks;
+}
+
+// What labspace-ui.js needs: the title, and the sections with their milestones and code blocks
+export function uiConfig(labspaceYaml, parse, dir = instructionsDir) {
   const config = parse(labspaceYaml);
   return {
     id: config.metadata?.id || slug(config.title),
@@ -88,6 +112,7 @@ export function uiConfig(labspaceYaml, parse) {
       id: slug(section.title),
       title: section.title,
       steps: (section.steps || []).map((step) => ({ id: slug(step.title), title: step.title, match: step.match || null })),
+      blocks: section.contentPath ? codeBlocks(fs.readFileSync(path.join(dir, section.contentPath), "utf8")) : [],
     })),
   };
 }

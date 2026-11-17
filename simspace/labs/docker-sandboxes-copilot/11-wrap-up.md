@@ -49,17 +49,17 @@ First, if the `quickstart` agent session from the *Docker inside the sandbox* mo
 
 Then remove the sandboxes created during the lab, along with everything inside them (images, containers, and data). The real `sbx rm` asks for confirmation (add `--force` to skip it); the simulation doesn't:
 
-```bash
+```bash id=host
 sbx ls
 ```
 
-```bash
+```bash id=host
 sbx rm quickstart fix-bugs add-search add-notif mcp
 ```
 
 `shell-demo` is the sandbox from the network policies module:
 
-```bash
+```bash id=host
 sbx rm shell-demo
 ```
 
@@ -69,27 +69,27 @@ sbx rm shell-demo
 
 If you don't want to keep the DHI MCP server, remove its registration:
 
-```bash
+```bash id=host
 sbx mcp rm dhi
 ```
 
 Remove the GitHub token you stored in the *Secrets and credentials* module from your OS keychain (skip this if you use these two secrets for other work):
 
-```bash
+```bash id=host
 sbx secret rm github -f
 ```
 
-```bash
+```bash id=host
 sbx secret rm copilot -f
 ```
 
 Your network policy is still **Locked Down**, with the rules you added for the lab (check with `sbx policy ls`). Keep it, adding hosts as your projects need them, or go back to the **Balanced** profile:
 
-```bash
+```bash id=host
 sbx policy reset --force
 ```
 
-```bash
+```bash id=host
 sbx policy init balanced
 ```
 

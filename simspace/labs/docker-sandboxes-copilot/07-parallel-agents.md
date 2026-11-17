@@ -62,13 +62,13 @@ This module uses several terminals on your host, all opened at the root of the r
 
 1. In **Terminal 1**, go back to the **root of the repository**. Clone mode must be started from there: from the `project` folder, `sbx` stops with the error `--clone requires a Git repository`. The agent therefore sees the whole repository, with the application in the `project/` folder.
 
-    ```bash
+    ```bash id=host
     cd ..
     ```
 
 2. Start a new agent in clone mode with the `--clone` flag. Give it a name: it also names the Git remote that you will fetch from later. As for `quickstart`, add the Python kit (from the root of the repository, its path is `./project/kits/python`):
 
-    ```bash
+    ```bash id=host
     sbx run copilot --clone --name fix-bugs --kit ./project/kits/python
     ```
 
@@ -82,17 +82,17 @@ This module uses several terminals on your host, all opened at the root of the r
 
 4. Once the agent has finished, switch to **Terminal 2**, leaving the agent session open in Terminal 1, and fetch its work:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     git fetch sandbox-fix-bugs
     ```
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     git log HEAD..sandbox-fix-bugs/main --oneline
     ```
 
     The sandbox exposes its clone as a Git remote named `sandbox-<name>`, and its branches are named `sandbox-<name>/<branch>`, where `<branch>` is the branch that was checked out when the sandbox was created (typically `main`). Review the commits, then merge or cherry-pick them as you normally would:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     git merge --no-edit sandbox-fix-bugs/main
     ```
 
@@ -120,13 +120,13 @@ The `project/prompts/` directory contains a ready-made prompt file for each:
 
 1. In **Terminal 1**, start an agent that implements search. The `"$(cat ...)"` must be quoted, otherwise the prompt is not passed correctly to the agent:
 
-    ```bash terminal-id=t1
+    ```bash id=host terminal-id=t1
     sbx run copilot --clone --name add-search --kit ./project/kits/python -- -i "$(cat project/prompts/implement-search.txt)"
     ```
 
 2. In **Terminal 3**, start a second agent that implements notifications:
 
-    ```bash terminal-id=t3
+    ```bash id=host terminal-id=t3
     sbx run copilot --clone --name add-notif --kit ./project/kits/python -- -i "$(cat project/prompts/implement-notifications.txt)"
     ```
 
@@ -134,7 +134,7 @@ The `project/prompts/` directory contains a ready-made prompt file for each:
 
 3. While they work, open the dashboard in **Terminal 4**:
 
-    ```bash terminal-id=t4
+    ```bash id=host terminal-id=t4
     sbx
     ```
 
@@ -142,11 +142,11 @@ The `project/prompts/` directory contains a ready-made prompt file for each:
 
 When both agents report that they are done, fetch their work from **Terminal 2**:
 
-```bash terminal-id=t2
+```bash id=host terminal-id=t2
 git fetch sandbox-add-search
 ```
 
-```bash terminal-id=t2
+```bash id=host terminal-id=t2
 git fetch sandbox-add-notif
 ```
 
@@ -156,37 +156,37 @@ After fetching, each agent's commits are available as remote-tracking branches, 
 
 1. Inspect what each agent committed before merging anything:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     git log HEAD..sandbox-add-search/main --oneline
     ```
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     git diff HEAD...sandbox-add-search/main --stat
     ```
 
     And the same for the notifications task:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     git log HEAD..sandbox-add-notif/main --oneline
     ```
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     git diff HEAD...sandbox-add-notif/main --stat
     ```
 
 2. Merge each agent's branch into your working branch. `--no-edit` keeps Git's default merge message instead of opening an editor. If both agents changed the same files you may get a merge conflict: resolve it as you would any other conflict, then run `git merge --continue`.
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     git merge --no-edit sandbox-add-search/main
     ```
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     git merge --no-edit sandbox-add-notif/main
     ```
 
 3. Check that the merged result works. In Terminal 2, reconnect to your `quickstart` sandbox, whose workspace is your working tree:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx run --name quickstart
     ```
 

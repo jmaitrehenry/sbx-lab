@@ -55,13 +55,13 @@ graph LR
 
 Show a summary of the kit that `sbx run copilot` uses:
 
-```bash
+```bash id=host
 sbx kit inspect sbx/copilot
 ```
 
 Then the kit's declaration itself:
 
-```bash
+```bash id=host
 sbx kit inspect sbx/copilot --format yaml
 ```
 
@@ -78,7 +78,7 @@ It's a small file, and it tells you a lot about the sandboxes you'll use in this
 
 Kits describe every agent the same way. Inspect the Claude Code kit:
 
-```bash
+```bash id=host
 sbx kit inspect sbx/claude
 ```
 
@@ -100,13 +100,13 @@ It declares two capabilities: a **lifecycle** hook that runs once when the sandb
 
 Check that the kit is valid:
 
-```bash
+```bash id=host
 sbx kit validate ./project/kits/python
 ```
 
 See what it declares:
 
-```bash
+```bash id=host
 sbx kit inspect ./project/kits/python
 ```
 
