@@ -63,7 +63,8 @@ function convert(src) {
       continue;
     }
     if (inFence) { lines.push(line); continue; }
-    if (/^\[\[.*\]\]\s*$/.test(line)) continue;
+    // [[<< Previous: X](a.md) | [Next >> Y](b.md)], [[Home](../README.md)]
+    if (/^\[\[.*\]\s*$/.test(line)) continue;
     lines.push(line.replace(/\]\(([^)\s]+)\)/g, (_, href) => `](${rewrite(src, href)})`));
   }
   return lines.join("\n");
