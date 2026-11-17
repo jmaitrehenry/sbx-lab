@@ -18,11 +18,14 @@ On macOS, Linux, or Windows in Git Bash:
 ./labspace-local/start.sh
 ```
 
-On Windows, in PowerShell:
+On Windows, from `cmd` or PowerShell (or double-click it):
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File labspace-local\start.ps1
+labspace-local\start.cmd
 ```
+
+It runs [`start.ps1`](start.ps1) with `-ExecutionPolicy Bypass`, for this run only: by default, Windows doesn't run
+PowerShell scripts that aren't signed ("running scripts is disabled on this system").
 
 Then open <http://localhost:3030>. The first run downloads the bridge for your system and pulls the interface image.
 `Ctrl-C` stops everything. Running `start.sh` again while the Labspace runs is safe: it keeps the running
