@@ -1,9 +1,10 @@
 name: pages
 
 # Publishes the repository's GitHub Pages site, which holds both web versions of the lab:
-#   /           the simulated lab (simspace/), as dockersamples/simspace's deploy-lab.yml builds it
+#   /           a landing page linking to the two (.github/pages/)
+#   /simspace/  the simulated lab (simspace/), as dockersamples/simspace's deploy-lab.yml builds it
 #   /labspace/  the static preview of the Labspace rendering (labspace-local/static)
-# A repository has a single Pages site, so the two are built into one artifact here, instead of
+# A repository has a single Pages site, so they are built into one artifact here, instead of
 # two workflows each replacing the other's site. Enable Pages first: Settings → Pages → Source:
 # "GitHub Actions".
 on:
@@ -16,6 +17,7 @@ on:
       - "labspace-local/content.mjs"
       - "labspace-local/theme.css"
       - "labspace-local/labspace-ui.js"
+      - ".github/pages/**"
       - ".github/workflows/pages.yaml"
   workflow_dispatch:
 
@@ -40,7 +42,13 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # ---- / : the simulated lab (the steps of deploy-lab.yml)
+      # ---- / : the landing page
+      - name: Add the landing page
+        run: |
+          mkdir -p _site
+          cp -R .github/pages/. _site/
+
+      # ---- /simspace/ : the simulated lab (the steps of deploy-lab.yml)
       - name: Validate the simulated lab
         run: |
           docker run --rm \
@@ -53,25 +61,20 @@ jobs:
           image="$SIMSPACE_RUNTIME_IMAGE:$SIMSPACE_TAG"
           docker pull "$image"
           cid="$(docker create "$image")"
-          mkdir -p _site
-          docker cp "$cid":/usr/share/nginx/html/. _site/
+          mkdir -p _site/simspace
+          docker cp "$cid":/usr/share/nginx/html/. _site/simspace/
           docker rm "$cid"
-          rm -rf _site/labs _site/labs.json
-          mkdir -p _site/labs
-          cp -R "$LABS_DIR/." _site/labs/
+          rm -rf _site/simspace/labs _site/simspace/labs.json
+          mkdir -p _site/simspace/labs
+          cp -R "$LABS_DIR/." _site/simspace/labs/
           docker run --rm \
             -v "$GITHUB_WORKSPACE:/work" \
             "$SIMSPACE_AUTHORING_IMAGE:$SIMSPACE_TAG" \
-            npm run generate-catalog -- "/work/$LABS_DIR" /work/_site/labs.json
+            npm run generate-catalog -- "/work/$LABS_DIR" /work/_site/simspace/labs.json
           # The runtime ships a dev config.json (localhost tracking): no tracking, no title here
-          rm -f _site/config.json
-          # The simulated lab's service worker caches every page and file under its scope, the
-          # whole site: keep it off the Labspace preview, which would otherwise stay on the
-          # version a visitor first saw.
-          anchor='if (url.origin !== self.location.origin) return;'
-          grep -qF "$anchor" _site/sw.js || { echo "::error::sw.js changed: update the labspace/ exclusion"; exit 1; }
-          sed -i "s|$anchor|$anchor\n  if (url.pathname.startsWith(new URL(\"labspace/\", self.registration.scope).pathname)) return;|" _site/sw.js
-          grep -q 'URL("labspace/"' _site/sw.js
+          rm -f _site/simspace/config.json
+          # The runtime's paths are relative (./assets, ./sw.js), so it runs from this sub-path,
+          # and its service worker's scope is /simspace/ only: it can't cache the other pages.
 
       # ---- /labspace/ : the static preview of the Labspace rendering
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
