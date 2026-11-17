@@ -99,6 +99,14 @@ writeJson("labspace.json", {
 writeJson("export.json", { title: config.title, subtitle: config.description, sections });
 for (const section of sections) writeJson(`sections/${section.id}.json`, section);
 
+// Links to the repository's files open on GitHub: the repository and commit being built in GitHub
+// Actions, the labspace.yaml's sourceRepo on main otherwise
+function githubBlobUrl() {
+  const { GITHUB_SERVER_URL, GITHUB_REPOSITORY, GITHUB_SHA } = process.env;
+  if (GITHUB_REPOSITORY && GITHUB_SHA) return `${GITHUB_SERVER_URL || "https://github.com"}/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/`;
+  return `https://${(config.metadata?.sourceRepo || "github.com/mathieu-benoit/sbx-lab").replace(/^https?:\/\//, "")}/blob/main/`;
+}
+
 // ------------------------------------------------------------------ shim, preview panel, deep links
 
 fs.copyFileSync(path.join(here, "labspace-shim.js"), path.join(out, "labspace-shim.js"));
@@ -113,7 +121,7 @@ fs.copyFileSync(path.join(here, "..", "theme.css"), path.join(out, "labspace-the
 fs.copyFileSync(path.join(here, "..", "labspace-ui.js"), path.join(out, "labspace-ui.js"));
 fs.writeFileSync(
   path.join(out, "labspace-ui.json"),
-  JSON.stringify(uiConfig(fs.readFileSync(path.join(instructionsDir, "labspace.yaml"), "utf8"), parse)),
+  JSON.stringify(uiConfig(fs.readFileSync(path.join(instructionsDir, "labspace.yaml"), "utf8"), parse, { github: githubBlobUrl() })),
 );
 fs.writeFileSync(indexFile, withTheme(fs.readFileSync(indexFile, "utf8"), base));
 // Deep links to a section (<base><section>) load the app: a page per section, which works in a

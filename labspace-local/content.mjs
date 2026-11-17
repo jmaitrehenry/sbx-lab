@@ -78,15 +78,19 @@ const slug = (title) =>
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-");
 
-// What labspace-ui.js needs: the title, and the sections with their milestones
-export function uiConfig(labspaceYaml, parse) {
+// What labspace-ui.js needs: the title, the sections with their milestones, and where links to
+// the repository's files go (`files`): { workspace, editor } to open them in a local editor, or
+// { github } (a ".../blob/<ref>/" URL) to show them on GitHub.
+export function uiConfig(labspaceYaml, parse, files = {}) {
   const config = parse(labspaceYaml);
   return {
     id: config.metadata?.id || slug(config.title),
     title: config.title,
+    files,
     sections: config.sections.map((section) => ({
       id: slug(section.title),
       title: section.title,
+      file: section.contentPath,
       steps: (section.steps || []).map((step) => ({ id: slug(step.title), title: step.title, match: step.match || null })),
     })),
   };
@@ -122,7 +126,13 @@ export function writeContent(outDir, parse = yamlParser()) {
     if (entry.name.endsWith(".md")) fs.writeFileSync(to, toLabspace(fs.readFileSync(from, "utf8")));
     else fs.copyFileSync(from, to);
   }
-  const ui = uiConfig(fs.readFileSync(path.join(instructionsDir, "labspace.yaml"), "utf8"), parse);
+  // The repository the terminals start in (the bridge reads the same variable), and the editor
+  // that opens its files
+  const files = {
+    workspace: path.resolve(process.env.LABSPACE_WORKSPACE || path.join(here, "..")),
+    editor: process.env.LABSPACE_EDITOR || "vscode",
+  };
+  const ui = uiConfig(fs.readFileSync(path.join(instructionsDir, "labspace.yaml"), "utf8"), parse, files);
   fs.writeFileSync(path.join(outDir, "labspace-ui.json"), JSON.stringify(ui));
   for (const [from, to] of Object.entries(UI_FILES)) fs.copyFileSync(path.join(here, from), path.join(outDir, to));
 }
