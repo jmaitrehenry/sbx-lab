@@ -94,14 +94,26 @@ jobs:
           sed -i 's|</head>|  <link rel="stylesheet" href="./instructions-only.css">\n  </head>|' _site/index.html
           grep -qF 'instructions-only.css' _site/index.html
 
+          # / and simspace/ : click a Mermaid diagram to open it in a zoomable popup.
+          grep -qF 'aria-roledescription' _site/assets/*.js || { echo "::error::the runtime's diagrams changed: update .github/pages/diagram-zoom.js"; exit 1; }
+          for site in _site _site/simspace; do
+            cp .github/pages/diagram-zoom.js "$site/"
+            sed -i 's|</head>|  <script defer src="./diagram-zoom.js"></script>\n  </head>|' "$site/index.html"
+            grep -qF 'diagram-zoom.js' "$site/index.html"
+          done
+
           # The root's service worker is scoped to the whole site: keep it off simspace/ (which has
-          # its own) and labspace/, and drop what the simulated lab, served from / until now, left
-          # in its cache (it serves pages cache-first).
+          # its own) and labspace/.
           anchor='if (url.origin !== self.location.origin) return;'
           grep -qF "$anchor" _site/sw.js || { echo "::error::sw.js changed: update the simspace/ and labspace/ exclusion"; exit 1; }
           sed -i "s|$anchor|$anchor\n  if ([\"simspace/\", \"labspace/\"].some((p) => url.pathname.startsWith(new URL(p, self.registration.scope).pathname))) return;|" _site/sw.js
           grep -q '"simspace/", "labspace/"' _site/sw.js
-          cat .github/pages/sw-cleanup.js >> _site/sw.js
+          # Both service workers serve everything cache-first and never refresh it: with the cleanup
+          # and the commit, each deploy installs a new worker that drops the stale cache.
+          for site in _site _site/simspace; do
+            cat .github/pages/sw-cleanup.js >> "$site/sw.js"
+            echo "// Deployed from $GITHUB_SHA" >> "$site/sw.js"
+          done
 
       # ---- /labspace/ : the static preview of the Labspace rendering
       - name: Build the Labspace preview
