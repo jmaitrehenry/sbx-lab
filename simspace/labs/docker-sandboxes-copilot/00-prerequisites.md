@@ -1,6 +1,6 @@
 # Prerequisites
 
-> **In the real lab, do this at home, before the meetup.** It installs tools and downloads the sandbox images, several hundred megabytes that take a long time on shared Wi-Fi. Here nothing is downloaded: run the commands to see what each one prints.
+> **In the real lab, do this at home, before you start.** It installs tools and downloads the sandbox images, several hundred megabytes that take a long time on shared Wi-Fi. Here nothing is downloaded: run the commands to see what each one prints.
 
 ## Accounts and tools
 
