@@ -70,7 +70,7 @@ graph LR
 
 To view the existing policies, use the `sbx policy ls` command:
 
-```bash
+```bash id=host
 sbx policy ls
 ```
 
@@ -81,7 +81,7 @@ Run this command to set the default:
 > [!WARNING]
 > `sbx policy reset` **deletes every network rule you have created on this machine**, not only the lab's. If you use `sbx` for other work, save your current rules first with `sbx policy ls` and re-add them afterwards.
 
-```bash
+```bash id=host
 sbx policy reset
 ```
 
@@ -90,23 +90,23 @@ The CLI restarts the daemon, resets the policies, and shows a picker. Choose the
 > [!TIP]
 > To do the same without the interactive picker, run these two commands:
 >
-> ```bash
+> ```bash id=host
 > sbx policy reset --force
 > ```
 >
-> ```bash
+> ```bash id=host
 > sbx policy init deny-all
 > ```
 
 Check the configured policies:
 
-```bash
+```bash id=host
 sbx policy ls
 ```
 
 You should now see this:
 
-```none
+```none id=host
   POLICY             SOURCE   APPLIES TO   SUMMARY
   default-deny-all   local    all          network: deny when no rule decides
   local-policy       local    all          filesystem read: 1 allow; filesystem write: 1 allow
@@ -114,13 +114,13 @@ You should now see this:
 
 Check whether `docker.com` is reachable under this policy:
 
-```bash
+```bash id=host
 sbx policy check network docker.com
 ```
 
 You will see this message:
 
-```none
+```none id=host
     Denied:      docker.com:443
     Governance:  Local policy only
     Context:     global
@@ -129,19 +129,19 @@ You will see this message:
 
 Now start your **first sandbox**: a microVM with just a shell, no agent yet. The current folder is its workspace, and `--name` gives it a name you will reuse when you clean up:
 
-```bash
+```bash id=host
 sbx run shell --name shell-demo
 ```
 
 Your prompt changes: you're now inside the sandbox. Try to reach `docker.com` from there:
 
-```bash
+```bash id=sandbox
 curl docker.com
 ```
 
 You will see this message:
 
-```none
+```none id=sandbox
 Approval required for docker.com:80.
 
 Review and respond with:
@@ -152,7 +152,7 @@ The request never left your machine: the host-side proxy blocked it and filed a 
 
 Exit this sandbox to return to your host:
 
-```bash
+```bash id=sandbox
 exit
 ```
 
@@ -160,13 +160,13 @@ exit
 
 To view a list of the hosts that were allowed or blocked by the proxy, use the `sbx policy log` command:
 
-```bash
+```bash id=host
 sbx policy log
 ```
 
 You should see output similar to the following:
 
-```none
+```none id=host
   BLOCKED REQUESTS
   SANDBOX           TYPE      HOST                                         PROXY     RULE                                                                                                                    REASON                                  LAST SEEN        COUNT
   shell-demo        network   docker.com:80                                forward   no applicable policies for op(action=net:connect:tcp, resource=net:domain:docker.com:80)                                No matching allow rule (default deny)   11:03:48 7-Nov   2
@@ -180,19 +180,19 @@ As you can see, the list of allowed hosts is small to begin with. However, it is
 
 Use the `sbx policy allow network` command to allow communication with `docker.com`:
 
-```bash
+```bash id=host
 sbx policy allow network docker.com
 ```
 
 Check `docker.com` again:
 
-```bash
+```bash id=host
 sbx policy check network docker.com
 ```
 
 You will see this message:
 
-```none
+```none id=host
     Allowed:     docker.com:443
     Governance:  Local policy only
     Context:     global
@@ -203,13 +203,13 @@ The `Rule` line names the rule that allowed the request: it's the ID that `sbx p
 
 Reconnect to the sandbox:
 
-```bash
+```bash id=host
 sbx run --name shell-demo
 ```
 
 Once in the sandbox, try to reach `docker.com` again, showing only the response headers:
 
-```bash
+```bash id=sandbox
 curl -I docker.com
 ```
 
@@ -218,7 +218,7 @@ This time `docker.com` answers itself, with a `301 Moved Permanently` redirect t
 > [!TIP]
 > You can allow several hosts in a single command, and use wildcards: `*.example.com` matches exactly one subdomain level (`api.example.com`), `**.example.com` matches any depth (`api.eu.example.com`). Neither matches `example.com` itself.
 >
-> ```bash
+> ```bash id=host
 > # Allow several hosts at once
 > sbx policy allow network "smtp.mailgun.org,api.sendgrid.com"
 >
@@ -230,7 +230,7 @@ This time `docker.com` answers itself, with a `301 Moved Permanently` redirect t
 
 To explicitly block a host, use the `sbx policy deny` command:
 
-```bash
+```bash id=host
 sbx policy deny network ads.example.com
 ```
 
@@ -240,13 +240,13 @@ Each rule you define manually is stored separately. To remove them, use the `sbx
 
 1. Remove the allow rule for `docker.com`:
 
-    ```bash
+    ```bash id=host
     sbx policy rm network --resource docker.com
     ```
 
 2. Remove the deny rule for `ads.example.com`:
 
-    ```bash
+    ```bash id=host
     sbx policy rm network --resource ads.example.com
     ```
 
@@ -256,7 +256,7 @@ If you have a service running on your host machine (for example a local Ollama i
 
 Inside the sandbox, use the name `host.docker.internal`, which the proxy routes to your host. The policy rule, on the other hand, names the service as your host sees it, `localhost:<port>`: you decide which ports of your own machine are reachable, one by one. You don't need to run this command for the lab:
 
-```bash
+```bash id=host
 sbx policy allow network localhost:11434
 ```
 
@@ -268,7 +268,7 @@ You will keep the **Locked Down** policy for the rest of the lab: rather than tr
 
 Add these four rules:
 
-```bash
+```bash id=host
 # GitHub and GitHub Copilot: the agent itself
 sbx policy allow network "github.com,**.github.com,**.githubcopilot.com"
 
@@ -297,11 +297,11 @@ The hosts have no port suffix on purpose: `apt` downloads from Debian over HTTP 
 
 List the policies again: `local-policy` now has one network rule per host.
 
-```bash
+```bash id=host
 sbx policy ls
 ```
 
-```none
+```none id=host
 POLICY             SOURCE   APPLIES TO   SUMMARY
 default-deny-all   local    all          network: deny when no rule decides
 local-policy       local    all          network: 10 allow; filesystem read: 1 allow; filesystem write: 1 allow
@@ -309,7 +309,7 @@ local-policy       local    all          network: 10 allow; filesystem read: 1 a
 
 Check a few of them:
 
-```bash
+```bash id=host
 sbx policy check network api.github.com
 sbx policy check network api.individual.githubcopilot.com
 sbx policy check network docker.com

@@ -51,7 +51,7 @@ graph LR
 
 1. Go back to the `project` directory (the clone mode module left you at the root of the repository) and reconnect to your sandbox:
 
-    ```bash
+    ```bash id=host
     cd project
     sbx run --name quickstart
     ```
@@ -74,7 +74,7 @@ graph LR
 
 3. From inside the agent session, list the running containers:
 
-    ```bash
+    ```bash id=sandbox
     !docker ps
     ```
 
@@ -94,7 +94,7 @@ graph LR
     > [!IMPORTANT]
     > A sandbox stops when no agent session is attached to it, and its containers and published ports go with it. If you exit the session (`Ctrl-C` twice), restart the sandbox without opening a new session:
     >
-    > ```bash
+    > ```bash id=host
     > sbx run --detach --name quickstart
     > ```
     >

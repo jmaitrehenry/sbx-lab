@@ -67,7 +67,7 @@ graph LR
 
 1. Register the DHI MCP server, from a terminal on your host:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx mcp add dhi --url https://dhi.io/mcp
     ```
 
@@ -75,18 +75,18 @@ graph LR
 
 2. Check that it's registered and ready:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx mcp ls
     ```
 
-    ```none
+    ```none id=host
     NAME   TRANSPORT     STATUS   GATEWAY                 DETAIL
     dhi    remote http   ready    LOCAL, managed by you
     ```
 
 3. From the `project` directory, create a dedicated sandbox named `mcp`, with the DHI server and the Trivy kit:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx create --name mcp --static-mcp dhi --kit ./kits/trivy copilot .
     ```
 
@@ -94,11 +94,11 @@ graph LR
 
     Check what the gateway was given:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx inspect mcp
     ```
 
-    ```none
+    ```none id=host
       MCP gateway:             configured
       MCP mode:                static
       MCP servers:             dhi
@@ -108,7 +108,7 @@ graph LR
 
 4. Start an agent in the `mcp` sandbox:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx run --name mcp
     ```
 
@@ -131,7 +131,7 @@ graph LR
 
 5. Exit the session (press **`Ctrl-C` twice**), then look at the sandbox's network activity:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx policy log mcp
     ```
 
@@ -146,7 +146,7 @@ Before switching DevBoard's Dockerfiles to the hardened images, measure what you
 
 1. Scan the two current base images and the two hardened images the agent suggested, with the kit's `scan-images` helper. `sbx exec` starts the sandbox again if it's stopped:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx exec mcp scan-images python:3.12-slim dhi.io/python:3.12 node:22-alpine dhi.io/node:22-alpine
     ```
 
@@ -154,7 +154,7 @@ Before switching DevBoard's Dockerfiles to the hardened images, measure what you
 
     The numbers change as new vulnerabilities are published, so yours will differ by a few. At the time of writing:
 
-    ```none
+    ```none id=host
     python:3.12-slim         83 vulnerabilities (0 critical, 15 high)
     dhi.io/python:3.12       49 vulnerabilities (0 critical, 7 high)
     node:22-alpine           16 vulnerabilities (0 critical, 6 high)
@@ -165,7 +165,7 @@ Before switching DevBoard's Dockerfiles to the hardened images, measure what you
 
 2. See what the scanner reached:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx policy log mcp
     ```
 

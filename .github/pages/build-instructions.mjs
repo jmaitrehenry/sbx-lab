@@ -54,7 +54,7 @@ function convert(src) {
   let inFence = false;
   const lines = [];
   for (const line of readFileSync(src, "utf8").split("\n")) {
-    const fence = line.match(/^(\s*)(```+|~~~+)(.*)$/);
+    const fence = line.match(/^([\s>]*)(```+|~~~+)(.*)$/); // also inside > quotes and alerts
     if (fence) {
       let info = fence[3].replace(/\s*terminal-id=\S+/g, "");
       if (!inFence && info.trim() && !info.trim().startsWith("mermaid")) info += " no-run-button";

@@ -55,7 +55,7 @@ graph LR
 - **Git**, to clone the repository and review the agents' work.
 - The **GitHub CLI** (`gh`), signed in to your GitHub account. [Install it](https://cli.github.com/), then run `gh auth login` and verify with:
 
-    ```bash
+    ```bash id=host
     gh auth status
     ```
 
@@ -67,7 +67,7 @@ Every exercise depends on `sbx` running correctly on your computer. **Do not ski
 
 1. Verify that `sbx` is installed:
 
-    ```bash
+    ```bash id=host
     sbx version
     ```
 
@@ -75,7 +75,7 @@ Every exercise depends on `sbx` running correctly on your computer. **Do not ski
 
 2. Sign in to Docker (skip this if you are already signed in):
 
-    ```bash
+    ```bash id=host
     sbx login
     ```
 
@@ -86,7 +86,7 @@ Every exercise depends on `sbx` running correctly on your computer. **Do not ski
 
 3. Check that your installation is healthy:
 
-    ```bash
+    ```bash id=host
     sbx diagnose
     ```
 
@@ -94,13 +94,13 @@ Every exercise depends on `sbx` running correctly on your computer. **Do not ski
 
 4. This lab assumes that your Docker account is **not** subject to organization AI Governance policies. Check the configured policies:
 
-    ```bash
+    ```bash id=host
     sbx policy ls
     ```
 
     Every policy should have `local` as its `SOURCE` (or `kit`, for a policy that applies to a single sandbox you created before). The output looks similar to this:
 
-    ```none
+    ```none id=host
     POLICY             SOURCE   APPLIES TO   SUMMARY
     default-deny-all   local    all          network: deny when no rule decides
     local-policy       local    all          network: 195 allow; filesystem read: 1 allow; filesystem write: 1 allow
@@ -110,11 +110,11 @@ Every exercise depends on `sbx` running correctly on your computer. **Do not ski
 
 5. Clone the lab repository and move into it:
 
-    ```bash
+    ```bash id=host
     git clone https://github.com/mathieu-benoit/sbx-lab
     ```
 
-    ```bash
+    ```bash id=host
     cd sbx-lab
     ```
 
@@ -122,15 +122,15 @@ Every exercise depends on `sbx` running correctly on your computer. **Do not ski
 
 6. From the root of the repository, download the two sandbox images the lab uses by creating, then removing, a sandbox of each kind:
 
-    ```bash
+    ```bash id=host
     sbx create --name warmup-shell shell .
     ```
 
-    ```bash
+    ```bash id=host
     sbx create --name warmup-copilot copilot .
     ```
 
-    ```bash
+    ```bash id=host
     sbx rm --force warmup-shell warmup-copilot
     ```
 

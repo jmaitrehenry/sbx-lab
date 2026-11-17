@@ -70,7 +70,7 @@ This module uses several terminals on your host, all opened at the root of the r
 
 1. Go back to the **root of the repository** and make sure that no agent session is still attached to your terminal (press **`Ctrl-C` twice** to exit one):
 
-    ```bash
+    ```bash id=host
     cd ..
     ```
 
@@ -79,7 +79,7 @@ This module uses several terminals on your host, all opened at the root of the r
 
 2. Start a new agent in clone mode with the `--clone` flag. Give it a name: it also names the Git remote that you will fetch from later. As for `quickstart`, add the Python kit (from the root of the repository, its path is `./project/kits/python`):
 
-    ```bash
+    ```bash id=host
     sbx run copilot --clone --name fix-bugs --kit ./project/kits/python
     ```
 
@@ -93,14 +93,14 @@ This module uses several terminals on your host, all opened at the root of the r
 
 4. Once the agent has finished, fetch its work from **terminal 2**, leaving the agent session open in terminal 1:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     git fetch sandbox-fix-bugs
     git log HEAD..sandbox-fix-bugs/main --oneline
     ```
 
     The sandbox exposes its clone as a Git remote named `sandbox-<name>`, and its branches are named `sandbox-<name>/<branch>`, where `<branch>` is the branch that was checked out when the sandbox was created (typically `main`). Review the commits, then merge or cherry-pick them as you normally would:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     git merge --no-edit sandbox-fix-bugs/main
     ```
 
@@ -125,7 +125,7 @@ The [`project/prompts/`](../project/prompts) directory contains a ready-made pro
 
 1. In terminal 1, start an agent that implements search:
 
-    ```bash terminal-id=terminal-1
+    ```bash id=host terminal-id=terminal-1
     sbx run copilot --clone --name add-search --kit ./project/kits/python -- -i "$(cat project/prompts/implement-search.txt)"
     ```
 
@@ -134,7 +134,7 @@ The [`project/prompts/`](../project/prompts) directory contains a ready-made pro
 
 2. In terminal 3, start a second agent that implements notifications:
 
-    ```bash terminal-id=terminal-3
+    ```bash id=host terminal-id=terminal-3
     sbx run copilot --clone --name add-notif --kit ./project/kits/python -- -i "$(cat project/prompts/implement-notifications.txt)"
     ```
 
@@ -142,7 +142,7 @@ The [`project/prompts/`](../project/prompts) directory contains a ready-made pro
 
 3. While they work, open the dashboard in terminal 4:
 
-    ```bash terminal-id=terminal-4
+    ```bash id=host terminal-id=terminal-4
     sbx
     ```
 
@@ -150,7 +150,7 @@ The [`project/prompts/`](../project/prompts) directory contains a ready-made pro
 
 When both agents report that they are done, fetch their work from terminal 2:
 
-```bash terminal-id=terminal-2
+```bash id=host terminal-id=terminal-2
 git fetch sandbox-add-search
 git fetch sandbox-add-notif
 ```
@@ -161,21 +161,21 @@ After fetching, each agent's commits are available as remote-tracking branches, 
 
 1. Inspect what each agent committed before merging anything:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     git log HEAD..sandbox-add-search/main --oneline
     git diff HEAD...sandbox-add-search/main --stat
     ```
 
     And the same for the notifications task:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     git log HEAD..sandbox-add-notif/main --oneline
     git diff HEAD...sandbox-add-notif/main --stat
     ```
 
 2. Merge each agent's branch into your working branch:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     git merge --no-edit sandbox-add-search/main
     git merge --no-edit sandbox-add-notif/main
     ```
@@ -184,7 +184,7 @@ After fetching, each agent's commits are available as remote-tracking branches, 
 
 3. Check that the merged result works. In terminal 2, reconnect to your `quickstart` sandbox, whose workspace is your working tree:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx run --name quickstart
     ```
 

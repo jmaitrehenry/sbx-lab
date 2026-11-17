@@ -64,11 +64,11 @@ Run the commands of this module from the root of the repository.
 
 1. Show a summary of the kit that `sbx run copilot` uses:
 
-    ```bash
+    ```bash id=host
     sbx kit inspect sbx/copilot
     ```
 
-    ```none
+    ```none id=host
       Name:         copilot
       Kind:         sandbox
       Schema:       v3
@@ -82,7 +82,7 @@ Run the commands of this module from the root of the repository.
 
 2. Show the kit's declaration itself:
 
-    ```bash
+    ```bash id=host
     sbx kit inspect sbx/copilot --format yaml
     ```
 
@@ -117,7 +117,7 @@ It's a small file, and it tells you a lot about the sandboxes you'll use in this
 
 Kits describe every agent the same way. Inspect the Claude Code kit:
 
-```bash
+```bash id=host
 sbx kit inspect sbx/claude
 ```
 
@@ -166,21 +166,21 @@ It declares two capabilities: a **lifecycle** hook that runs once when the sandb
 
 1. Check that the kit is valid:
 
-    ```bash
+    ```bash id=host
     sbx kit validate ./project/kits/python
     ```
 
-    ```none
+    ```none id=host
       ✓ ./project/kits/python — valid (directory)
     ```
 
 2. See what it declares:
 
-    ```bash
+    ```bash id=host
     sbx kit inspect ./project/kits/python
     ```
 
-    ```none
+    ```none id=host
       Name:         python
       Kind:         mixin
       Schema:       v3

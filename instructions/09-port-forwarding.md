@@ -43,7 +43,7 @@ graph LR
 
 1. With the Docker Compose stack from the previous module still running (the `quickstart` sandbox must be running: see `sbx ls`), run the following in a terminal on your host:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx port publish quickstart 8000:8000
     ```
 
@@ -55,7 +55,7 @@ graph LR
 
 1. Publish the sandbox's port 3000 on port 3001 of your host to reach the frontend:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx port publish quickstart 3001:3000
     ```
 
@@ -70,7 +70,7 @@ graph LR
 
 1. To list the ports published by a sandbox, run `sbx port ls` with the sandbox name:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx port ls quickstart
     ```
 
@@ -84,7 +84,7 @@ graph LR
 
 2. To stop publishing a port, use `sbx port unpublish`:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx port unpublish quickstart 8000:8000
     ```
 
@@ -163,19 +163,19 @@ Try it in a separate sandbox, from the `project` directory, in another terminal.
 
 1. Go to the `project` directory:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     cd project
     ```
 
 2. Create a sandbox with the Python kit and the port kit:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx create --name ports-demo --kit ./kits/python --kit ./kits/api-port copilot .
     ```
 
 3. List its ports. You haven't published anything, yet port 8000 is already there, on a host port that `sbx` picked:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx port ls ports-demo
     ```
 
@@ -186,7 +186,7 @@ Try it in a separate sandbox, from the `project` directory, in another terminal.
 
 4. Start a small web server on port 8000 in the sandbox. It serves the project folder:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx exec ports-demo sh -c 'nohup python3 -m http.server 8000 >/dev/null 2>&1 &'
     ```
 
@@ -194,7 +194,7 @@ Try it in a separate sandbox, from the `project` directory, in another terminal.
 
 6. Remove the sandbox:
 
-    ```bash terminal-id=terminal-2
+    ```bash id=host terminal-id=terminal-2
     sbx rm --force ports-demo
     ```
 

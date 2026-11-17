@@ -46,12 +46,12 @@ graph LR
 
 Remove the sandboxes created during the lab, along with everything inside them (images, containers, and data):
 
-```bash terminal-id=terminal-2
+```bash id=host terminal-id=terminal-2
 sbx ls
 sbx rm quickstart fix-bugs add-search add-notif mcp
 ```
 
-```bash terminal-id=terminal-2
+```bash id=host terminal-id=terminal-2
 sbx rm shell-demo
 ```
 
@@ -62,23 +62,23 @@ sbx rm shell-demo
 
 If you don't want to keep the DHI MCP server, remove its registration:
 
-```bash terminal-id=terminal-2
+```bash id=host terminal-id=terminal-2
 sbx mcp rm dhi
 ```
 
 Remove the GitHub token you stored in [Secrets and credentials](03-secrets-credentials.md) from your OS keychain (skip this if you use these two secrets for other work):
 
-```bash terminal-id=terminal-2
+```bash id=host terminal-id=terminal-2
 sbx secret rm github -f
 ```
 
-```bash terminal-id=terminal-2
+```bash id=host terminal-id=terminal-2
 sbx secret rm copilot -f
 ```
 
 Your network policy is still **Locked Down**, with the rules you added for the lab (check with `sbx policy ls`). Keep it, adding hosts as your projects need them, or go back to the **Balanced** profile:
 
-```bash terminal-id=terminal-2
+```bash id=host terminal-id=terminal-2
 sbx policy reset
 ```
 
