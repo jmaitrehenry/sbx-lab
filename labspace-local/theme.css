@@ -246,6 +246,18 @@ body {
   color: rgba(255, 255, 255, 0.4);
 }
 
+/* A sandbox block's header is blue, so you see at a glance that the command runs in the sandbox
+   (same colours as .github/pages/code-blocks.css) */
+.workshop-body .code-block > .lsui-code-label[data-label="sandbox"] {
+  background: rgba(37, 96, 255, 0.24);
+  border-bottom-color: rgba(110, 150, 255, 0.25);
+  color: #b7caff;
+}
+
+.workshop-body .code-block > .lsui-code-label[data-label="sandbox"] .lsui-code-label-icon {
+  color: #b7caff;
+}
+
 .workshop-body .code-block .button-container button {
   border: none;
   border-radius: 8px;

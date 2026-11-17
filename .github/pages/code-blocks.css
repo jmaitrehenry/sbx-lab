@@ -17,3 +17,14 @@
 .code-block-label:has(> span[title="sandbox"]) > .code-block-label-icon::before {
   content: "deployed_code";
 }
+
+/* A sandbox block's header is blue, so you see at a glance that the command runs in the sandbox
+   (same colours as labspace-local/theme.css) */
+.code-block-header:has(> .code-block-label > span[title="sandbox"]) {
+  background: rgba(37, 96, 255, 0.24);
+  border-bottom-color: rgba(110, 150, 255, 0.25);
+}
+.code-block-label:has(> span[title="sandbox"]),
+.code-block-label:has(> span[title="sandbox"]) > .code-block-label-icon {
+  color: #b7caff;
+}
