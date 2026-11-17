@@ -5,6 +5,10 @@
 # releases, and checked against bridge\release.lock (or, without a release, built in a container).
 # The same as start.sh, for Windows.
 #
+#   labspace-local\start.cmd
+#
+# start.cmd runs this script with -ExecutionPolicy Bypass: Windows doesn't run unsigned scripts by
+# default ("running scripts is disabled on this system"). Or, by hand:
 #   powershell -ExecutionPolicy Bypass -File labspace-local\start.ps1
 #
 # Running it again while the Labspace runs is safe: it reuses the running bridge, makes sure the
