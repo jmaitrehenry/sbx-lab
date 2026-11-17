@@ -189,6 +189,17 @@ function resolveSavePath(filePath) {
   return target;
 }
 
+// The interface takes a block's code from the raw Markdown: for a block inside a quote or an alert
+// (> [!TIP]), every line still starts with the quote's "> ", which the shell would read as a
+// redirection. Removes the quote markers, as many levels as every line has.
+function unquote(code) {
+  const lines = code.split("\n");
+  while (lines.length && lines.every((line) => /^ {0,3}>/.test(line))) {
+    for (let i = 0; i < lines.length; i++) lines[i] = lines[i].replace(/^ {0,3}> ?/, "");
+  }
+  return lines.join("\n");
+}
+
 const server = http.createServer(async (req, res) => {
   if (!allowedHosts.has(req.headers.host)) return send(res, 403, { error: "unexpected Host header" });
   const url = new URL(req.url, `http://${req.headers.host}`);
@@ -213,6 +224,7 @@ const server = http.createServer(async (req, res) => {
 
       if (url.pathname === "/api/command") {
         if (typeof body.cmd !== "string" || !body.cmd) throw new Error("missing cmd");
+        body.cmd = unquote(body.cmd);
         const id = typeof body.terminalId === "string" && body.terminalId ? body.terminalId : DEFAULT_TERMINAL;
         const term = ensureTerminal(id);
         // Bracketed-paste would be nicer for multi-line blocks, but most shells handle \r per line.
@@ -224,6 +236,7 @@ const server = http.createServer(async (req, res) => {
 
       if (url.pathname === "/api/save") {
         if (typeof body.body !== "string") throw new Error("missing body");
+        body.body = unquote(body.body);
         const target = resolveSavePath(body.filePath);
         fs.mkdirSync(path.dirname(target), { recursive: true });
         fs.writeFileSync(target, body.body);
