@@ -1,0 +1,20 @@
+/* Root of the Pages site: the Simspace runtime with only its instructions panel. The hands-on lab
+   runs on your own machine, so the terminal side is hidden (and build-instructions.mjs gives every
+   code block no-run-button). pages.yaml checks that these class names still exist in the runtime. */
+.labspace-resize-handle,
+.labspace-panel:has(> .terminal-panel) {
+  display: none !important;
+}
+.labspace-panel:has(> .workshop-panel) {
+  flex: 1 1 auto !important;
+}
+.workshop-header-bar,
+.workshop-progress-track,
+.workshop-body {
+  margin-left: auto;
+  margin-right: auto;
+}
+.workshop-header-bar,
+.workshop-progress-track {
+  max-width: 696px;
+}

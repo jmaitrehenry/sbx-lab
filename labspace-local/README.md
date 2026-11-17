@@ -95,7 +95,7 @@ The bridge types commands into your shell, so it only accepts what the Labspace 
 [`static/build.mjs`](static/build.mjs) builds the same interface as a static site, to see the rendering without
 running anything: no container and no bridge. The right panel is a preview that shows what the **Run** and
 **Save** buttons would do. The [`pages`](../.github/workflows/pages.yaml) workflow publishes it to GitHub Pages in
-`labspace/` (`https://<owner>.github.io/sbx-lab/labspace/`), next to the simulated lab in `simspace/`.
+`labspace/` (`https://<owner>.github.io/sbx-lab/labspace/`), next to the simulated lab in `simspace/` and the hands-on lab at the root.
 
 ```bash
 node labspace-local/static/build.mjs --base /sbx-lab/labspace/ --out _site/labspace
