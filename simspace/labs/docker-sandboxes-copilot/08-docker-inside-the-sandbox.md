@@ -44,11 +44,11 @@ graph LR
 
 1. In **Terminal 1**, go back to the `project` directory (the previous module left you at the root of the repository) and reconnect to your sandbox:
 
-    ```bash
+    ```bash id=host
     cd project
     ```
 
-    ```bash
+    ```bash id=host
     sbx run --name quickstart
     ```
 
@@ -76,7 +76,7 @@ graph LR
 
     Three containers run inside the sandbox: the frontend, the backend and PostgreSQL. Now run `docker ps` in **Terminal 2**, on your host:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     docker ps
     ```
 

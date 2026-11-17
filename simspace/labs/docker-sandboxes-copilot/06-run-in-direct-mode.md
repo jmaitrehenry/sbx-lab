@@ -35,7 +35,7 @@ graph LR
 
 1. Reconnect to your sandbox from the `project` directory:
 
-    ```bash
+    ```bash id=host
     sbx run --name quickstart
     ```
 
@@ -90,21 +90,21 @@ graph LR
     /exit
     ```
 
-    ```bash
+    ```bash id=host
     git status
     ```
 
-    ```bash
+    ```bash id=host
     git diff
     ```
 
     Then commit it. The next module starts agents from your *committed* code, so this fix must be committed:
 
-    ```bash
+    ```bash id=host
     git add -A
     ```
 
-    ```bash
+    ```bash id=host
     git commit -m "Fix pagination offset in list_issues"
     ```
 

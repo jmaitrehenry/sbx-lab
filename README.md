@@ -111,7 +111,7 @@ Stuck? See [Troubleshooting](instructions/troubleshooting.md).
 
 1. Clone the repository:
 
-    ```bash
+    ```bash id=host
     git clone https://github.com/mathieu-benoit/sbx-lab
     cd sbx-lab
     ```

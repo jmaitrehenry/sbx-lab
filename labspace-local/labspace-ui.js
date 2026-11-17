@@ -99,6 +99,33 @@
     render();
   }
 
+  // A header on each code block, as in the simulated lab: an icon and where the block runs
+  // ("host" or "sandbox"), or its language. The interface numbers its blocks (data-code-index);
+  // labspace-ui.json lists them in the same order. Added last and shown first (order: -1), so the
+  // interface's own first child keeps its styles.
+  const SANDBOX_ICON = "deployed_code";
+  function renderCodeLabels(section) {
+    for (const block of document.querySelectorAll(".workshop-body .code-block")) {
+      const index = Number(block.querySelector("[data-code-index]")?.getAttribute("data-code-index"));
+      const info = section.blocks?.[index];
+      let label = block.querySelector(":scope > .lsui-code-label");
+      block.dataset.lsuiLabelled = info?.label || ""; // handled: the observer leaves it alone
+      if (!info) {
+        label?.remove();
+        continue;
+      }
+      if (label?.dataset.label === info.label) continue;
+      label?.remove();
+      label = el("div", "lsui-code-label");
+      label.dataset.label = info.label;
+      label.append(
+        el("span", "lsui-code-label-icon material-symbols-outlined", info.id === "sandbox" ? SANDBOX_ICON : "terminal"),
+        el("span", "lsui-code-label-text", info.label),
+      );
+      block.append(label);
+    }
+  }
+
   // Puts the header and the card in place (again, after a re-render) and fills them
   function render() {
     if (!config) return;
@@ -120,6 +147,7 @@
     const current = activeIndex();
     renderHeader(header, current);
     renderMilestones(card, config.sections[current]);
+    renderCodeLabels(config.sections[current]);
   }
 
   let scheduled = false;
@@ -175,7 +203,8 @@
         const missing =
           body &&
           (!body.parentElement.querySelector(":scope > .lsui-milestones") ||
-            !body.parentElement.parentElement.querySelector(":scope > .lsui-header"));
+            !body.parentElement.parentElement.querySelector(":scope > .lsui-header") ||
+            body.querySelector('.code-block:not([data-lsui-labelled]), .code-block:not([data-lsui-labelled=""]):not(:has(> .lsui-code-label))'));
         if (missing) schedule();
       }).observe(document.body, { childList: true, subtree: true });
       render();

@@ -54,7 +54,7 @@ graph LR
 
 1. Store your GitHub token **now**, before creating the sandboxes your agents will use. Secrets are **global** by default, which means they are available to every sandbox you create. Here the token is resolved from the GitHub CLI each time it is needed:
 
-    ```bash
+    ```bash id=host
     sbx secret set github --command 'gh auth token'
     sbx secret set copilot --command 'gh auth token'
     ```
@@ -72,13 +72,13 @@ graph LR
 
 2. Check that the credentials were stored with the `sbx secret ls` command:
 
-    ```bash
+    ```bash id=host
     sbx secret ls
     ```
 
     You should see something like this (secret values are never displayed):
 
-    ```none
+    ```none id=host
     SCOPE      TYPE      NAME      SECRET
     (global)   service   github    (stored)
     (global)   service   copilot   (stored)

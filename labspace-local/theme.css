@@ -218,6 +218,46 @@ body {
   padding-right: 0.4rem;
 }
 
+/* The header that labspace-ui.js adds: an icon and where the block runs (host, sandbox) or its
+   language, as in the simulated lab */
+.workshop-body .code-block:has(> .lsui-code-label) {
+  flex-wrap: wrap;
+}
+
+.workshop-body .code-block > .lsui-code-label {
+  order: -1;
+  flex: 0 0 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  min-height: 40px;
+  padding: 0.3rem 0.4rem 0.3rem 0.85rem;
+  background: rgba(255, 255, 255, 0.035);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.5);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.workshop-body .code-block > .lsui-code-label .lsui-code-label-icon {
+  font-size: 1.4em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* A sandbox block's header is blue, so you see at a glance that the command runs in the sandbox
+   (same colours as .github/pages/code-blocks.css) */
+.workshop-body .code-block > .lsui-code-label[data-label="sandbox"] {
+  background: rgba(37, 96, 255, 0.24);
+  border-bottom-color: rgba(110, 150, 255, 0.25);
+  color: #b7caff;
+}
+
+.workshop-body .code-block > .lsui-code-label[data-label="sandbox"] .lsui-code-label-icon {
+  color: #b7caff;
+}
+
 .workshop-body .code-block .button-container button {
   border: none;
   border-radius: 8px;

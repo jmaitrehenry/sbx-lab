@@ -51,14 +51,14 @@ graph LR
 
 1. Go back to the `project` directory (the clone mode module left you at the root of the repository) and reconnect to your sandbox:
 
-    ```bash
+    ```bash id=host
     cd project
     sbx run --name quickstart
     ```
 
 2. Give your agent the following prompt:
 
-    ```console
+    ```console id=sandbox
     Start the full application stack using Docker Compose.
     Once everything is healthy:
     1. Confirm the backend API is responding at http://localhost:8000/health
@@ -74,13 +74,13 @@ graph LR
 
 3. From inside the agent session, list the running containers:
 
-    ```bash
+    ```bash id=sandbox
     !docker ps
     ```
 
     The output looks similar to this:
 
-    ```console
+    ```console id=sandbox
     CONTAINER ID   IMAGE                COMMAND                  CREATED         STATUS                   PORTS                                         NAMES
     a74c644a575f   project-frontend     "docker-entrypoint.s…"   2 minutes ago   Up 2 minutes             0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp   project-frontend-1
     046609163f75   project-backend      "uvicorn app.main:ap…"   2 minutes ago   Up 2 minutes (healthy)   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp   project-backend-1
@@ -94,7 +94,7 @@ graph LR
     > [!IMPORTANT]
     > A sandbox stops when no agent session is attached to it, and its containers and published ports go with it. If you exit the session (`Ctrl-C` twice), restart the sandbox without opening a new session:
     >
-    > ```bash
+    > ```bash id=host
     > sbx run --detach --name quickstart
     > ```
     >

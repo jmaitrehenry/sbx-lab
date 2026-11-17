@@ -65,11 +65,11 @@ graph LR
 
 Reset the policies, then choose the default without the interactive picker:
 
-```bash
+```bash id=host
 sbx policy reset --force
 ```
 
-```bash
+```bash id=host
 sbx policy init deny-all
 ```
 
@@ -77,13 +77,13 @@ sbx policy init deny-all
 
 Check the configured policies. You now see only `default-deny-all` and a `local-policy` with no network rule:
 
-```bash
+```bash id=host
 sbx policy ls
 ```
 
 Check whether `docker.com` is reachable under this policy:
 
-```bash
+```bash id=host
 sbx policy check network docker.com
 ```
 
@@ -91,7 +91,7 @@ It's `Denied`: *no matching allow rule (default deny)*.
 
 Now start your **first sandbox**: a microVM with just a shell, no agent yet. The current folder is its workspace, and `--name` gives it a name you will reuse when you clean up:
 
-```bash
+```bash id=host
 sbx run shell --name shell-demo
 ```
 
@@ -113,7 +113,7 @@ Leave this sandbox to return to your host:
 
 To view the hosts that were allowed or blocked by the proxy, use `sbx policy log`:
 
-```bash
+```bash id=host
 sbx policy log
 ```
 
@@ -123,19 +123,19 @@ Add `--json` for a machine-readable output.
 
 Use `sbx policy allow network` to allow communication with `docker.com`:
 
-```bash
+```bash id=host
 sbx policy allow network docker.com
 ```
 
 Check it again; it's now `Allowed`:
 
-```bash
+```bash id=host
 sbx policy check network docker.com
 ```
 
 Reconnect to the sandbox and try again, showing only the response headers:
 
-```bash
+```bash id=host
 sbx run --name shell-demo
 ```
 
@@ -151,7 +151,7 @@ This time `docker.com` answers itself, with a `301 Moved Permanently` redirect t
 
 > **Tip:** you can allow several hosts in a single command, and use wildcards: `*.example.com` matches exactly one subdomain level (`api.example.com`), `**.example.com` matches any depth (`api.eu.example.com`). Neither matches `example.com` itself.
 >
-> ```bash no-run-button
+> ```bash id=host no-run-button
 > sbx policy allow network "smtp.mailgun.org,api.sendgrid.com"
 > sbx policy allow network "**.npmjs.org"
 > ```
@@ -160,17 +160,17 @@ This time `docker.com` answers itself, with a `301 Moved Permanently` redirect t
 
 To explicitly block a host, use `sbx policy deny`:
 
-```bash
+```bash id=host
 sbx policy deny network ads.example.com
 ```
 
 Each rule you define manually is stored separately. Remove them with `sbx policy rm` (the real command asks you to confirm; add `--force` to skip the question):
 
-```bash
+```bash id=host
 sbx policy rm network --resource docker.com
 ```
 
-```bash
+```bash id=host
 sbx policy rm network --resource ads.example.com
 ```
 
@@ -178,7 +178,7 @@ sbx policy rm network --resource ads.example.com
 
 If a service runs on your host (a local Ollama, a database), `localhost` inside the sandbox is the sandbox itself. Use the name `host.docker.internal`, which the proxy routes to your host. The policy rule names the service as your host sees it, `localhost:<port>`, so you decide which ports of your own machine are reachable, one by one. You don't need this for the lab:
 
-```bash no-run-button
+```bash id=host no-run-button
 sbx policy allow network localhost:11434
 ```
 
@@ -190,25 +190,25 @@ You keep the **Locked Down** policy for the rest of the lab: rather than trustin
 
 GitHub and GitHub Copilot, the agent itself:
 
-```bash
+```bash id=host
 sbx policy allow network "github.com,**.github.com,**.githubcopilot.com"
 ```
 
 Python for the backend tests, Debian packages and PyPI:
 
-```bash
+```bash id=host
 sbx policy allow network "deb.debian.org,dhi.io,pypi.org,files.pythonhosted.org"
 ```
 
 Docker Hub, to pull images:
 
-```bash
+```bash id=host
 sbx policy allow network "**.docker.io,production.cloudfront.docker.com"
 ```
 
 Node.js, for the frontend's npm packages:
 
-```bash
+```bash id=host
 sbx policy allow network "registry.npmjs.org"
 ```
 
@@ -225,21 +225,21 @@ A few more hosts are needed later, but you don't add them here: the kits that ne
 
 List the policies again: `local-policy` now has one network rule per host (10 in total).
 
-```bash
+```bash id=host
 sbx policy ls
 ```
 
 Check a few of them. The first two are `Allowed`, both by a wildcard rule: `api.github.com` by `**.github.com` and the Copilot host by `**.githubcopilot.com` (each `Rule` line shows a different ID). `docker.com` is still `Denied`, because you removed its rule above:
 
-```bash
+```bash id=host
 sbx policy check network api.github.com
 ```
 
-```bash
+```bash id=host
 sbx policy check network api.individual.githubcopilot.com
 ```
 
-```bash
+```bash id=host
 sbx policy check network docker.com
 ```
 

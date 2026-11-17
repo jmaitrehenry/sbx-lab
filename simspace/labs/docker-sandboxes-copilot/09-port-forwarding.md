@@ -40,13 +40,13 @@ Use **Terminal 2**: the agent session from the previous module stays open in Ter
 
 1. With the Docker Compose stack from the previous module still running (the `quickstart` sandbox must be running: see `sbx ls`), publish the API port:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx port publish quickstart 8000:8000
     ```
 
 2. Request the API's health endpoint, served from inside the sandbox. In the real lab you open [http://localhost:8000/docs](http://localhost:8000/docs) to see the live Swagger UI:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     curl http://localhost:8000/health
     ```
 
@@ -54,13 +54,13 @@ Use **Terminal 2**: the agent session from the previous module stays open in Ter
 
 1. Publish the sandbox's port 3000 on port 3001 of your host to reach the frontend. The syntax is `HOST_PORT:SANDBOX_PORT`; 3001 is used here to show that the two ports don't have to match:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx port publish quickstart 3001:3000
     ```
 
 2. Request the DevBoard web front end. In the real lab you open [http://localhost:3001](http://localhost:3001), click **Register** to create an account, then create a project and a few issues:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     curl http://localhost:3001
     ```
 
@@ -70,13 +70,13 @@ Use **Terminal 2**: the agent session from the previous module stays open in Ter
 
 To list the ports published by a sandbox, run `sbx port ls` with the sandbox name:
 
-```bash terminal-id=t2
+```bash id=host terminal-id=t2
 sbx port ls quickstart
 ```
 
 To stop publishing a port, use `sbx port unpublish`. With `HOST_PORT:SANDBOX_PORT` it removes that one mapping; with only the sandbox port, every host port mapped to it. You don't need to run this one now:
 
-```bash no-run-button
+```bash id=host no-run-button
 sbx port unpublish quickstart 8000:8000
 ```
 
@@ -127,34 +127,34 @@ Try it in a separate sandbox, from the `project` directory, in **Terminal 2**:
 
 1. Go to the `project` directory (you're already there if you followed the previous modules), then create a sandbox with the Python kit and the port kit:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     cd project
     ```
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx create --name ports-demo --kit ./kits/python --kit ./kits/api-port copilot .
     ```
 
 2. List its ports. You haven't published anything, yet port 8000 is already there, on a host port that `sbx` picked:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx port ls ports-demo
     ```
 
 3. Start a small web server on port 8000 in the sandbox. It serves the project folder:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx exec ports-demo sh -c 'nohup python3 -m http.server 8000 >/dev/null 2>&1 &'
     ```
 
 4. Request `http://127.0.0.1:<HOST PORT>/`, with the host port from step 2: you see the files of the `project` folder, served from inside the sandbox.
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     curl http://127.0.0.1:60000/
     ```
 
 5. Remove the sandbox:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx rm --force ports-demo
     ```

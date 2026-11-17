@@ -58,23 +58,23 @@ graph LR
 
 1. Register the DHI MCP server, from a terminal on your host (use Terminal 2: the `quickstart` session may still be open in Terminal 1). In the real lab, a browser window may open for you to sign in with your Docker account:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx mcp add dhi --url https://dhi.io/mcp
     ```
 
 2. Check that it's registered and ready:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx mcp ls
     ```
 
 3. From the `project` directory, create a dedicated sandbox named `mcp`, with the DHI server and the Trivy kit:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     cd project
     ```
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx create --name mcp --static-mcp dhi --kit ./kits/trivy copilot .
     ```
 
@@ -82,7 +82,7 @@ graph LR
 
     Check what the gateway was given:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx inspect mcp
     ```
 
@@ -90,7 +90,7 @@ graph LR
 
 4. Start an agent in the `mcp` sandbox:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx run --name mcp
     ```
 
@@ -114,7 +114,7 @@ graph LR
     /exit
     ```
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx policy log mcp
     ```
 
@@ -128,7 +128,7 @@ Before switching DevBoard's Dockerfiles to the hardened images, measure what you
 
 1. Scan the two current base images and the two hardened images the agent suggested, with the kit's `scan-images` helper:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx exec mcp scan-images python:3.12-slim dhi.io/python:3.12 node:22-alpine dhi.io/node:22-alpine
     ```
 
@@ -138,7 +138,7 @@ Before switching DevBoard's Dockerfiles to the hardened images, measure what you
 
 2. See what the scanner reached:
 
-    ```bash terminal-id=t2
+    ```bash id=host terminal-id=t2
     sbx policy log mcp
     ```
 

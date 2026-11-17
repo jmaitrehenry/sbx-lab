@@ -42,13 +42,13 @@ graph LR
 
 1. Reconnect to your sandbox from the `project` directory:
 
-    ```bash
+    ```bash id=host
     sbx run --name quickstart
     ```
 
 2. Run the existing test suite by giving your agent the following prompt:
 
-    ```console
+    ```console id=sandbox
     Set up the Python environment for the FastAPI backend and run the test suite.
     Report:
     - Which tests pass
@@ -69,7 +69,7 @@ graph LR
 
 3. Ask your agent to fix the pagination bug by giving it the following prompt:
 
-    ```console
+    ```console id=sandbox
     Two tests are failing because of a pagination bug. Fix it:
 
     1. test_pagination_first_page_returns_results
@@ -85,7 +85,7 @@ graph LR
 
 4. Confirm the result by giving your agent the following prompt:
 
-    ```console
+    ```console id=sandbox
     Run the full test suite and report the results.
     ```
 
@@ -93,14 +93,14 @@ graph LR
 
 5. Exit the agent session (press **`Ctrl-C` twice**) and review the change on your host:
 
-    ```bash
+    ```bash id=host
     git status
     git diff
     ```
 
     Then commit it. The next module starts agents from your *committed* code, so this fix must be committed:
 
-    ```bash
+    ```bash id=host
     git add -A
     git commit -m "Fix pagination offset in list_issues"
     ```
