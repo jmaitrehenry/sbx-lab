@@ -25,6 +25,16 @@ bridge and its shells, makes sure the interface is up, and opens the browser.
 - A code block with `terminal-id=<name>` (for example `` ```bash terminal-id=agent-2 ``) runs in the tab of that
   name, and creates it if needed.
 - Reloading the page keeps the shells and replays their recent output. They stop when you stop `start.sh`.
+- A link to another module opens its section (and the heading it points to). A link to a file or folder of the
+  repository opens it in your editor: VS Code by default, or the one `LABSPACE_EDITOR` names (`vscode`,
+  `vscode-insiders`, `cursor`, `windsurf`, `idea`). Your browser asks once before handing a link to the editor.
+
+To run the lab in another clone of the repository, for example one on `main` while you work on this one, point
+`LABSPACE_WORKSPACE` at it: the terminals start there, and file links open its files.
+
+```bash
+LABSPACE_WORKSPACE=$HOME/sbx-lab LABSPACE_EDITOR=cursor ./labspace-local/start.sh
+```
 
 ## How it works
 
@@ -95,7 +105,8 @@ The bridge types commands into your shell, so it only accepts what the Labspace 
 [`static/build.mjs`](static/build.mjs) builds the same interface as a static site, to see the rendering without
 running anything: no container and no bridge. The right panel is a preview that shows what the **Run** and
 **Save** buttons would do. The [`pages`](../.github/workflows/pages.yaml) workflow publishes it to GitHub Pages in
-`labspace/`, next to the simulated lab at the root of the site (`https://<owner>.github.io/sbx-lab/labspace/`).
+`labspace/`, next to the simulated lab at the root of the site (`https://<owner>.github.io/sbx-lab/labspace/`). There,
+links to the repository's files open them on GitHub, at the commit the site was built from.
 
 ```bash
 node labspace-local/static/build.mjs --base /sbx-lab/labspace/ --out _site/labspace
@@ -107,7 +118,6 @@ preview panel instead of VS Code), writes the sections as JSON files, and adds a
 
 ## Known limitations
 
-- **No IDE**: "open file" links do nothing. Use your own editor on the repository.
 - **Linux**: node-pty has no prebuilt binary for Linux, so `npm install` compiles it, which needs `python3`, `make`
   and a C++ compiler, and recent npm versions may ask you to approve its install script.
 - The interface image is used as `latest`; its `ttyd` workspace mode is recent (April 2026). It also reads a VS Code

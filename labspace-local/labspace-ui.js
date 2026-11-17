@@ -4,6 +4,11 @@
 // A milestone checks itself when you click Run or Copy on a code block, or open a link, whose text
 // contains its `match`; clicking a milestone checks or unchecks it. Progress stays in this browser.
 //
+//
+// It also gives the instructions' relative links somewhere to go (the interface would open the raw
+// Markdown in a new tab): a link to another module opens that section, and a link to a file of the
+// repository (or a `:fileLink`) opens it in your editor, or on GitHub in the static preview.
+//
 // The interface is a React app this script doesn't own: it only adds its own elements next to the
 // interface's, and puts them back if a re-render removes them. Styles are in theme.css.
 (() => {
@@ -163,6 +168,105 @@
     },
     true,
   );
+
+  // ------------------------------------------------------------------ links to modules and files
+
+  // Editors that open a file from a URL (the path is absolute)
+  const EDITORS = {
+    vscode: (file) => `vscode://file${file}`,
+    "vscode-insiders": (file) => `vscode-insiders://file${file}`,
+    cursor: (file) => `cursor://file${file}`,
+    windsurf: (file) => `windsurf://file${file}`,
+    idea: (file) => `idea://open?file=${encodeURIComponent(file)}`,
+  };
+
+  // Opens a file or folder of the repository (`relativePath` from its root): in the local editor,
+  // or on GitHub in the static preview. Returns false when there is nowhere to open it.
+  function openRepoFile(relativePath, line) {
+    const files = config?.files || {};
+    const clean = relativePath.replace(/^\/+/, "").replace(/\/+$/, "");
+    if (files.workspace) {
+      const editor = EDITORS[files.editor] || EDITORS.vscode;
+      const url = editor(`${files.workspace}/${clean}`) + (line && files.editor !== "idea" ? `:${line}` : "");
+      // A custom scheme hands the file to the editor; the page stays where it is
+      const a = el("a");
+      a.href = url;
+      a.click();
+      return true;
+    }
+    if (files.github) {
+      window.open(`${files.github}${clean}${line ? `#L${line}` : ""}`, "_blank", "noopener");
+      return true;
+    }
+    return false;
+  }
+
+  // GitHub's anchor for a heading: lower case, punctuation removed, spaces as dashes
+  const githubAnchor = (text) =>
+    text
+      .trim()
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s_-]/gu, "")
+      .replace(/\s/g, "-");
+
+  function goToSection(section, hash) {
+    history.pushState({}, "", `${base}${section.id}`);
+    window.dispatchEvent(new PopStateEvent("popstate")); // react-router follows the History API
+    if (!hash) return;
+    // The interface's headings have no id: find the one whose GitHub anchor is the link's, once
+    // the section has loaded
+    const anchor = decodeURIComponent(hash);
+    const started = Date.now();
+    const find = () => {
+      const heading = [...document.querySelectorAll(".workshop-body :is(h1, h2, h3, h4)")].find(
+        (h) => githubAnchor(h.textContent) === anchor,
+      );
+      if (heading) heading.scrollIntoView({ block: "start" });
+      else if (Date.now() - started < 3000) setTimeout(find, 100);
+    };
+    setTimeout(find, 100);
+  }
+
+  // Relative links of the Markdown, resolved from instructions/ (where the modules live)
+  document.addEventListener(
+    "click",
+    (event) => {
+      if (!config || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey) return;
+      const link = event.target instanceof Element ? event.target.closest(".workshop-body a[href]") : null;
+      const href = link?.getAttribute("href");
+      if (!href || /^([a-z][a-z0-9+.-]*:|\/\/|#|\/)/i.test(href)) return; // absolute, anchor or site path
+      const url = new URL(href, "https://repo.invalid/instructions/");
+      const repoPath = decodeURIComponent(url.pathname.slice(1));
+      const section = config.sections.find((s) => `instructions/${s.file.replace(/^\.\//, "")}` === repoPath);
+      if (section) {
+        event.preventDefault();
+        event.stopPropagation();
+        goToSection(section, url.hash.slice(1));
+      } else if (openRepoFile(repoPath)) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    },
+    true,
+  );
+
+  // `:fileLink[...]{path=...}` directives: the interface asks its API to open the file in the IDE,
+  // which a host terminal doesn't have. Open it here instead (the path is from the repository root).
+  const previousFetch = window.fetch.bind(window);
+  window.fetch = (input, init = {}) => {
+    const url = typeof input === "string" ? input : input?.url;
+    if (url === "/api/labspace/open-file" && config) {
+      try {
+        const { filePath, line } = JSON.parse(init.body || "{}");
+        if (filePath && openRepoFile(filePath, line)) {
+          return Promise.resolve(new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } }));
+        }
+      } catch {
+        /* fall through to the interface */
+      }
+    }
+    return previousFetch(input, init);
+  };
 
   fetch(`${base}labspace-ui.json`, { cache: "no-store" })
     .then((response) => (response.ok ? response.json() : Promise.reject(new Error(response.statusText))))
