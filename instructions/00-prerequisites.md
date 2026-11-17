@@ -108,7 +108,19 @@ Every exercise depends on `sbx` running correctly on your computer. **Do not ski
 
     If you see policies from any other source, your organization restricts what sandboxes can do and some exercises may not work. Use a personal Docker account or ask your administrator for guidance.
 
-5. Clone the lab repository if you haven't yet (see [Getting started](../README.md#getting-started)), then, from its root, download the two sandbox images the lab uses by creating, then removing, a sandbox of each kind:
+5. Clone the lab repository and move into it:
+
+    ```bash
+    git clone https://github.com/mathieu-benoit/sbx-lab
+    ```
+
+    ```bash
+    cd sbx-lab
+    ```
+
+    You commit the agents' work locally during the lab, but you never push it, so you don't need a fork. Skip this step if you already have a clone, for example because you started this page with `./labspace-local/start.sh`: its terminal opens in the root of your clone.
+
+6. From the root of the repository, download the two sandbox images the lab uses by creating, then removing, a sandbox of each kind:
 
     ```bash
     sbx create --name warmup-shell shell .
