@@ -156,7 +156,7 @@ Before you hand this sandbox to an agent that runs without asking for confirmati
 
 2. Ask the agent to tell you about the project:
 
-    ```console
+    ```console id=sandbox
     Explore this codebase and give me:
     1. A summary of the architecture and tech stack
     2. How to run it locally (without Docker Compose if possible)

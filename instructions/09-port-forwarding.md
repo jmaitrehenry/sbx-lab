@@ -76,7 +76,7 @@ graph LR
 
     The output looks similar to this:
 
-    ```console terminal-id=terminal-2
+    ```console id=host terminal-id=terminal-2
     HOST IP     HOST PORT   SANDBOX PORT   PROTOCOL
     127.0.0.1   3001        3000           tcp4
     127.0.0.1   8000        8000           tcp4
@@ -179,7 +179,7 @@ Try it in a separate sandbox, from the `project` directory, in another terminal.
     sbx port ls ports-demo
     ```
 
-    ```console terminal-id=terminal-2
+    ```console id=host terminal-id=terminal-2
     HOST IP     HOST PORT   SANDBOX PORT   PROTOCOL
     127.0.0.1   60000       8000           tcp4
     ```

@@ -114,7 +114,7 @@ graph LR
 
     Then give it this prompt:
 
-    ```console terminal-id=terminal-2
+    ```console id=sandbox terminal-id=terminal-2
     For both the frontend and the backend app, from their Dockerfiles, find the runtime Docker Hardened Image (not a -dev variant) that matches it and how many known CVEs it has. At the end, list the tools you called.
     ```
 

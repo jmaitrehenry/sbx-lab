@@ -87,7 +87,7 @@ This module uses several terminals on your host, all opened at the root of the r
 
 3. Give your agent the following prompt to fix the last failing test:
 
-    ```console
+    ```console id=sandbox
     One test is still failing: test_updated_at_changes_on_update. The updated_at columns in project/backend/app/models.py are never refreshed when a row is updated. Fix the bug, run the tests to confirm it, and commit with a descriptive message.
     ```
 
@@ -190,7 +190,7 @@ After fetching, each agent's commits are available as remote-tracking branches, 
 
     Then give the agent this prompt:
 
-    ```console terminal-id=terminal-2
+    ```console id=sandbox terminal-id=terminal-2
     Run the full test suite and report the results.
     ```
 

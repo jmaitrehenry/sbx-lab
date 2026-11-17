@@ -58,7 +58,7 @@ graph LR
 
 2. Give your agent the following prompt:
 
-    ```console
+    ```console id=sandbox
     Start the full application stack using Docker Compose.
     Once everything is healthy:
     1. Confirm the backend API is responding at http://localhost:8000/health
@@ -80,7 +80,7 @@ graph LR
 
     The output looks similar to this:
 
-    ```console
+    ```console id=sandbox
     CONTAINER ID   IMAGE                COMMAND                  CREATED         STATUS                   PORTS                                         NAMES
     a74c644a575f   project-frontend     "docker-entrypoint.s…"   2 minutes ago   Up 2 minutes             0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp   project-frontend-1
     046609163f75   project-backend      "uvicorn app.main:ap…"   2 minutes ago   Up 2 minutes (healthy)   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp   project-backend-1
