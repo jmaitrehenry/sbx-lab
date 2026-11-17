@@ -1,2 +1,5 @@
 # Created by the sbx v0.54 daemon in the folder it starts from (not part of the lab)
 shim-start.lock
+
+# Static Labspace preview (labspace-local/static/build.mjs)
+_site/

@@ -69,6 +69,21 @@ The bridge types commands into your shell, so it only accepts what the Labspace 
 - The terminal page can only be framed by `localhost:3030`.
 - Save writes only under this repository, or under your home folder for paths that start with `~/`.
 
+## Static preview (GitHub Pages)
+
+[`static/build.mjs`](static/build.mjs) builds the same interface as a static site, to see the rendering without
+running anything: no container and no bridge. The right panel is a preview that shows what the **Run** and
+**Save** buttons would do. The [`labspace-pages`](../.github/workflows/labspace-pages.yaml) workflow publishes it
+to GitHub Pages.
+
+```bash
+node labspace-local/static/build.mjs --base /sbx-lab/ --out _site
+```
+
+It builds the interface client from `dockersamples/labspace-infra` at a pinned commit, with small patches (base path,
+preview panel instead of VS Code), writes the sections as JSON files, and adds a script that answers the client's
+`/api` calls from them.
+
 ## Known limitations
 
 - **Links between modules** (`[Next >> ...](02-kits.md)`) open the raw Markdown in a new browser tab; use the
