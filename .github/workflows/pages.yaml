@@ -1,9 +1,11 @@
 name: pages
 
 # Publishes the repository's GitHub Pages site, which holds both web versions of the lab:
-#   /           the simulated lab (simspace/), as dockersamples/simspace's deploy-lab.yml builds it
+#   /           the hands-on lab (README.md + instructions/), in the Simspace runtime's instructions
+#               panel, without terminals (.github/pages/)
+#   /simspace/  the simulated lab (simspace/), as dockersamples/simspace's deploy-lab.yml builds it
 #   /labspace/  the static preview of the Labspace rendering (labspace-local/static)
-# A repository has a single Pages site, so the two are built into one artifact here, instead of
+# A repository has a single Pages site, so they are built into one artifact here, instead of
 # two workflows each replacing the other's site. Enable Pages first: Settings → Pages → Source:
 # "GitHub Actions".
 on:
@@ -11,11 +13,13 @@ on:
     branches: [main]
     paths:
       - "simspace/**"
+      - "README.md"
       - "instructions/**"
       - "labspace-local/static/**"
       - "labspace-local/content.mjs"
       - "labspace-local/theme.css"
       - "labspace-local/labspace-ui.js"
+      - ".github/pages/**"
       - ".github/workflows/pages.yaml"
   workflow_dispatch:
 
@@ -39,44 +43,67 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
 
-      # ---- / : the simulated lab (the steps of deploy-lab.yml)
-      - name: Validate the simulated lab
+      - name: Validate the labs (simulated lab + hands-on lab as a Simspace lab)
         run: |
-          docker run --rm \
-            -v "$GITHUB_WORKSPACE/$LABS_DIR:/labs:ro" \
-            "$SIMSPACE_AUTHORING_IMAGE:$SIMSPACE_TAG" \
-            npm run validate-lab -- /labs
-      - name: Assemble the simulated lab (runtime payload + labs + catalog)
+          set -euo pipefail
+          node .github/pages/build-instructions.mjs _instructions/labs
+          for dir in "$LABS_DIR" _instructions/labs; do
+            docker run --rm \
+              -v "$GITHUB_WORKSPACE/$dir:/labs:ro" \
+              "$SIMSPACE_AUTHORING_IMAGE:$SIMSPACE_TAG" \
+              npm run validate-lab -- /labs
+          done
+
+      # ---- / and /simspace/ : the Simspace runtime payload + labs + catalog (the steps of
+      # deploy-lab.yml), once with the hands-on lab and once with the simulated lab
+      - name: Assemble the Simspace sites
         run: |
           set -euo pipefail
           image="$SIMSPACE_RUNTIME_IMAGE:$SIMSPACE_TAG"
           docker pull "$image"
           cid="$(docker create "$image")"
-          mkdir -p _site
-          docker cp "$cid":/usr/share/nginx/html/. _site/
+          mkdir -p _runtime
+          docker cp "$cid":/usr/share/nginx/html/. _runtime/
           docker rm "$cid"
-          rm -rf _site/labs _site/labs.json
-          mkdir -p _site/labs
-          cp -R "$LABS_DIR/." _site/labs/
-          docker run --rm \
-            -v "$GITHUB_WORKSPACE:/work" \
-            "$SIMSPACE_AUTHORING_IMAGE:$SIMSPACE_TAG" \
-            npm run generate-catalog -- "/work/$LABS_DIR" /work/_site/labs.json
-          # The runtime ships a dev config.json (localhost tracking): no tracking, no title here
-          rm -f _site/config.json
-          # The simulated lab's service worker caches every page and file under its scope, the
-          # whole site: keep it off the Labspace preview, which would otherwise stay on the
-          # version a visitor first saw.
+          assemble() { # <labs dir> <site dir>
+            mkdir -p "$2"
+            cp -R _runtime/. "$2/"
+            rm -rf "$2/labs" "$2/labs.json"
+            # The runtime ships a dev config.json (localhost tracking): no tracking, no title here
+            rm -f "$2/config.json"
+            mkdir -p "$2/labs"
+            cp -R "$1/." "$2/labs/"
+            docker run --rm \
+              -v "$GITHUB_WORKSPACE:/work" \
+              "$SIMSPACE_AUTHORING_IMAGE:$SIMSPACE_TAG" \
+              npm run generate-catalog -- "/work/$1" "/work/$2/labs.json"
+          }
+          assemble _instructions/labs _site
+          assemble "$LABS_DIR" _site/simspace
+
+          # / : only the instructions panel (instructions-only.css hides the terminal side).
+          # Fail if the runtime renamed what the stylesheet relies on.
+          for c in labspace-resize-handle labspace-panel terminal-panel workshop-panel workshop-header-bar workshop-progress-track workshop-body; do
+            grep -qF "$c" _site/assets/*.css || { echo "::error::the runtime has no .$c any more: update .github/pages/instructions-only.css"; exit 1; }
+          done
+          cp .github/pages/instructions-only.css _site/
+          sed -i 's|</head>|  <link rel="stylesheet" href="./instructions-only.css">\n  </head>|' _site/index.html
+          grep -qF 'instructions-only.css' _site/index.html
+
+          # The root's service worker is scoped to the whole site: keep it off simspace/ (which has
+          # its own) and labspace/, and drop what the simulated lab, served from / until now, left
+          # in its cache (it serves pages cache-first).
           anchor='if (url.origin !== self.location.origin) return;'
-          grep -qF "$anchor" _site/sw.js || { echo "::error::sw.js changed: update the labspace/ exclusion"; exit 1; }
-          sed -i "s|$anchor|$anchor\n  if (url.pathname.startsWith(new URL(\"labspace/\", self.registration.scope).pathname)) return;|" _site/sw.js
-          grep -q 'URL("labspace/"' _site/sw.js
+          grep -qF "$anchor" _site/sw.js || { echo "::error::sw.js changed: update the simspace/ and labspace/ exclusion"; exit 1; }
+          sed -i "s|$anchor|$anchor\n  if ([\"simspace/\", \"labspace/\"].some((p) => url.pathname.startsWith(new URL(p, self.registration.scope).pathname))) return;|" _site/sw.js
+          grep -q '"simspace/", "labspace/"' _site/sw.js
+          cat .github/pages/sw-cleanup.js >> _site/sw.js
 
       # ---- /labspace/ : the static preview of the Labspace rendering
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 24
       - name: Build the Labspace preview
         run: node labspace-local/static/build.mjs --base "/${{ github.event.repository.name }}/labspace/" --out _site/labspace
 
