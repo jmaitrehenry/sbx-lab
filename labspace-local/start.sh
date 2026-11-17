@@ -3,7 +3,7 @@
 #   - the bridge (bridge/) on http://localhost:8085, natively, with your shell
 #   - the Labspace interface in a container on http://localhost:3030
 # Ctrl-C stops both. Needs Docker only: the bridge is a binary downloaded from the repository's
-# releases, and checked against bridge/release.lock. On Windows without Git Bash, use start.ps1.
+# releases, and checked against bridge/release.lock (or, without a release, built in a container). On Windows without Git Bash, use start.ps1.
 #
 # Running it again while the Labspace runs is safe: it reuses the running bridge, makes sure the
 # interface is up, opens the browser and returns.
@@ -17,6 +17,8 @@ export BRIDGE_PORT="${BRIDGE_PORT:-8085}"
 url="http://localhost:3030"
 export LABSPACE_INTERFACE_IMAGE="${LABSPACE_INTERFACE_IMAGE:-dockersamples/labspace-interface:latest}"
 compose=(docker compose -f "$here/compose.yaml")
+# The image that builds the bridge when bridge/release.lock names no release
+go_image="golang:1.25-alpine"
 
 command -v docker >/dev/null || { echo "Docker is required for the Labspace interface." >&2; exit 1; }
 
@@ -93,12 +95,22 @@ bridge_binary() {
   expected="$(awk -v n="$name" '$2 == n { print $1 }' "$here/bridge/release.lock")"
 
   if [ -z "$version" ]; then
-    # No release yet: build it, when Go is installed
-    command -v go >/dev/null || { echo "bridge/release.lock names no release yet: install Go to build the bridge, or set LABSPACE_BRIDGE." >&2; return 1; }
-    bin="$here/.bin/labspace-bridge-dev$ext"
+    # No release yet: build it from source, in the Go image (Go isn't needed on your machine).
+    # The Go caches are kept in a volume, so later builds take seconds.
     echo "Building the bridge..." >&2
-    (cd "$here/bridge" && go generate ./... && go build -trimpath -o "$bin" .) >&2
-    echo "$bin"
+    mkdir -p "$here/.bin"
+    # Host paths as Windows paths in Git Bash, and no conversion of the container paths
+    local src out
+    src="$(cd "$here/bridge" && { pwd -W 2>/dev/null || pwd; })"
+    out="$(cd "$here/.bin" && { pwd -W 2>/dev/null || pwd; })"
+    MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL="*" docker run --rm \
+      -v "$src:/src" -v "$out:/out" -v labspace-bridge-go-cache:/cache -w /src \
+      -e GOCACHE=/cache/build -e GOMODCACHE=/cache/mod -e CGO_ENABLED=0 -e TARGET="$os/$arch" \
+      -e OWNER="$(id -u):$(id -g)" -e BIN="labspace-bridge-dev$ext" \
+      "$go_image" sh -c 'go generate ./... &&
+        GOOS="${TARGET%/*}" GOARCH="${TARGET#*/}" go build -trimpath -o "/out/$BIN" . &&
+        chown -R "$OWNER" "/out/$BIN" public/vendor' >&2
+    echo "$here/.bin/labspace-bridge-dev$ext"
     return
   fi
   [ -n "$expected" ] || { echo "bridge/release.lock has no checksum for $name." >&2; return 1; }

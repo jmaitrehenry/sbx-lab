@@ -117,8 +117,10 @@ download the binary for your system into `.bin/` (ignored by git), and only run 
   labspace-local/bridge/lock.sh bridge-v0.1.0
   ```
 
-- **Without a release** (`release.lock` names no version), or to try a change, the start scripts build the bridge from
-  source, which needs [Go](https://go.dev/dl/) 1.25+. To build it yourself and use it:
+- **Without a release** (`release.lock` names no version), the start scripts build the bridge from source in the
+  `golang` image, for your system, so you don't need Go either. The Go caches are kept in the
+  `labspace-bridge-go-cache` volume: the first build takes a minute, the next ones a few seconds. To try a change
+  with Go installed, build it yourself and point the start script at it:
 
   ```bash
   cd labspace-local/bridge && go generate ./... && go build -o ../.bin/labspace-bridge .

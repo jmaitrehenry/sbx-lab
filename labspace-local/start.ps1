@@ -2,7 +2,8 @@
 #   - the bridge (bridge/) on http://localhost:8085, natively, with PowerShell
 #   - the Labspace interface in a container on http://localhost:3030
 # Ctrl-C stops both. Needs Docker only: the bridge is a binary downloaded from the repository's
-# releases, and checked against bridge\release.lock. The same as start.sh, for Windows.
+# releases, and checked against bridge\release.lock (or, without a release, built in a container).
+# The same as start.sh, for Windows.
 #
 #   powershell -ExecutionPolicy Bypass -File labspace-local\start.ps1
 #
@@ -20,6 +21,8 @@ if (-not $env:LABSPACE_INTERFACE_IMAGE) { $env:LABSPACE_INTERFACE_IMAGE = "docke
 $port = [int]$env:BRIDGE_PORT
 $url = "http://localhost:3030"
 $composeFile = Join-Path $here "compose.yaml"
+# The image that builds the bridge when bridge\release.lock names no release
+$goImage = "golang:1.25-alpine"
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
   Write-Error "Docker is required for the Labspace interface."
@@ -101,20 +104,20 @@ function Get-Bridge {
   }
 
   if (-not $lock["version"]) {
-    # No release yet: build it, when Go is installed
-    if (-not (Get-Command go -ErrorAction SilentlyContinue)) {
-      throw "bridge\release.lock names no release yet: install Go to build the bridge, or set LABSPACE_BRIDGE."
-    }
-    $bin = Join-Path $here ".bin\labspace-bridge-dev.exe"
+    # No release yet: build it from source, in the Go image (Go isn't needed on your machine).
+    # The Go caches are kept in a volume, so later builds take seconds.
     Write-Host "Building the bridge..."
-    Push-Location (Join-Path $here "bridge")
-    try {
-      & go generate ./...
-      if ($LASTEXITCODE -ne 0) { throw "go generate failed" }
-      & go build -trimpath -o $bin .
-      if ($LASTEXITCODE -ne 0) { throw "go build failed" }
-    } finally { Pop-Location }
-    return $bin
+    $out = Join-Path $here ".bin"
+    New-Item -ItemType Directory -Force -Path $out | Out-Null
+    # No double quotes: PowerShell 5.1 mangles them in the arguments of a program
+    $script = 'go generate ./... && GOOS=${TARGET%/*} GOARCH=${TARGET#*/} go build -trimpath -o /out/$BIN .'
+    & docker run --rm `
+      -v "$(Join-Path $here 'bridge'):/src" -v "${out}:/out" -v labspace-bridge-go-cache:/cache -w /src `
+      -e GOCACHE=/cache/build -e GOMODCACHE=/cache/mod -e CGO_ENABLED=0 -e "TARGET=windows/$arch" `
+      -e BIN=labspace-bridge-dev.exe `
+      $goImage sh -c $script
+    if ($LASTEXITCODE -ne 0) { throw "building the bridge failed" }
+    return (Join-Path $out "labspace-bridge-dev.exe")
   }
   $expected = $sums[$name]
   if (-not $expected) { throw "bridge\release.lock has no checksum for $name." }
