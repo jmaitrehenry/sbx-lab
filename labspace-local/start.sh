@@ -29,13 +29,17 @@ open_browser() {
   if [ -n "${LABSPACE_NO_OPEN:-}" ]; then :
   elif command -v open >/dev/null; then open "$url"
   elif command -v xdg-open >/dev/null; then xdg-open "$url" >/dev/null 2>&1
+  elif command -v cmd.exe >/dev/null; then cmd.exe //c start "" "$url" # Windows (Git Bash)
   fi
 }
 
 # The interface's own index.html, with theme.css added: it gives the Labspace the look of the
 # simulated lab. Taken from the image, so it always matches the image's assets.
 docker image inspect "$LABSPACE_INTERFACE_IMAGE" >/dev/null 2>&1 || docker pull -q "$LABSPACE_INTERFACE_IMAGE" >/dev/null
-docker run --rm --entrypoint /bin/cat "$LABSPACE_INTERFACE_IMAGE" /usr/local/app/public/index.html \
+# On Windows, Git Bash (MSYS) rewrites arguments that look like Unix paths into Windows paths
+# ("/bin/cat" becomes "C:/Program Files/Git/usr/bin/cat"): these are paths in the container.
+MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL="*" \
+  docker run --rm --entrypoint /bin/cat "$LABSPACE_INTERFACE_IMAGE" /usr/local/app/public/index.html \
   | node "$here/content.mjs" --themed-index "$here/.ui/index.html"
 
 # Already running? Then the bridge answers its health check: keep it and its shells, make sure the
