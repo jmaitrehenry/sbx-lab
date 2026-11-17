@@ -1,7 +1,7 @@
 # 📝 Prerequisites
 
 > [!IMPORTANT]
-> **Do this page at home, before the meetup.** It installs tools and downloads the sandbox images, several hundred megabytes that take a long time on shared Wi-Fi. It takes about 15 minutes.
+> **Do this page at home, before the lab.** It installs tools and downloads the sandbox images, several hundred megabytes that take a long time on shared Wi-Fi. It takes about 15 minutes.
 
 ```mermaid
 graph LR
@@ -136,6 +136,6 @@ Every exercise depends on `sbx` running correctly on your computer. **Do not ski
 
     The images stay on your computer, so the sandboxes you create during the lab start in seconds.
 
-You're all set! At the meetup, start with the next module.
+You're all set! When the lab starts, continue with the next module.
 
 [[Home](../README.md) | [Next >> Network policies](01-network-policies.md)]

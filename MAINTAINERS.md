@@ -54,7 +54,7 @@ This repository is the **Docker Sandboxes with GitHub Copilot Lab**: a guided la
   - The `POST` to `paste.rs` prints `Approval required for paste.rs:443.`, then `Review and respond with: sbx policy approval ls`, and exits 0. It shows in `sbx policy log quickstart` (blocked, `No matching allow rule (default deny)`) and as a pending approval in `sbx policy approval ls`.
   - `sbx policy log <name>` also lists entries of an earlier, removed sandbox with the same name.
 - Module 01: with `docker.com` allowed, `curl -I docker.com` returns `HTTP/1.1 301 Moved Permanently` with `Location: https://www.docker.com/`. Without a terminal, `sbx policy rm` needs `--force`; in a terminal it asks for confirmation.
-- Pre-meetup warm-up (module 00): `sbx create` of a `shell` and a `copilot` sandbox took about 7 s each with cached images, and `sbx rm` keeps the template images (`sbx template ls` unchanged). Not checked: a first download on a machine without cached images.
+- Pre-lab warm-up (module 00): `sbx create` of a `shell` and a `copilot` sandbox took about 7 s each with cached images, and `sbx rm` keeps the template images (`sbx template ls` unchanged). Not checked: a first download on a machine without cached images.
 - Not checked: the TUI's Network panel (needs a keyboard), how far a Copilot Free allowance goes through the lab's ~10 prompts, and signing in to the DHI MCP server with a free Docker account.
 - The source files no longer label the intentional bugs with `# BUG:` comments, so that the agent has to find them; the tests still carry the hints.
 

@@ -92,7 +92,7 @@ Because the agent can't step outside these doors, you can let it work without ap
 
 | #  | Module | You will... | Time |
 |----|--------|-------------|------|
-| 00 | [Prerequisites](instructions/00-prerequisites.md) | Check your accounts and tools | **before the meetup** |
+| 00 | [Prerequisites](instructions/00-prerequisites.md) | Check your accounts and tools | **before the lab** |
 | 01 | [Network policies](instructions/01-network-policies.md) | Start your first sandbox, lock the network down, then allow what you need | 10 min |
 | 02 | [Kits](instructions/02-kits.md) | See how an agent's sandbox is defined, and build a kit | 8 min |
 | 03 | [Secrets and credentials](instructions/03-secrets-credentials.md) | Store a token the agent can use but never read | 3 min |
@@ -118,7 +118,7 @@ Stuck? See [Troubleshooting](instructions/troubleshooting.md).
 
     You commit the agents' work locally during the lab, but you never push it, so you don't need a fork.
 
-2. Complete the [prerequisites](instructions/00-prerequisites.md) **before the meetup**: they download several hundred megabytes, which is slow on shared Wi-Fi.
+2. Complete the [prerequisites](instructions/00-prerequisites.md) **before the lab**: they download several hundred megabytes, which is slow on shared Wi-Fi.
 
 3. Follow the modules in order.
 

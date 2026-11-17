@@ -2,7 +2,7 @@
 
 An interactive, fully in-browser version of the [Docker Sandboxes with GitHub Copilot lab](../README.md), built on [Simspace](https://github.com/dockersamples/simspace) with the [simspace-starter](https://github.com/dockersamples/simspace-starter) template. Instructions on the left, four simulated terminals on the right: every command and every agent answer is scripted, so it runs the same for everyone, with nothing to install, no Docker account and no Copilot usage allowance to spend.
 
-Use it to preview the real lab before a meetup, to revisit it afterwards, or to teach it where nobody can install `sbx`. The hands-on lab in [`instructions/`](../instructions) stays the reference; this folder is its translation.
+Use it to preview the real lab before you take it, to revisit it afterwards, or to teach it where nobody can install `sbx`. The hands-on lab in [`instructions/`](../instructions) stays the reference; this folder is its translation.
 
 ## What's in the translation
 
