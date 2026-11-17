@@ -1,8 +1,11 @@
 
-// Appended by pages.yaml to the runtime's sw.js at the root of the site. Until now the root served
-// the simulated lab, and this worker serves pages cache-first, so returning visitors would keep
-// getting its cached page. On activation, drop what is cached for this scope, except simspace/
-// (whose own worker manages it). Only this site's paths: other Pages sites share the origin.
+// Appended by pages.yaml to the Simspace runtime's sw.js, at the root of the site and in simspace/,
+// followed by a line with the deployed commit, so every deploy installs a new worker.
+// The runtime's worker serves pages, scripts and stylesheets cache-first and never refreshes them,
+// so without this, returning visitors would keep the version of the site they first saw (and, at
+// the root, the simulated lab that was served there before). On activation, drop what is cached
+// for this worker's scope, except simspace/ when this is the root's worker (simspace/ has its own).
+// Only this site's paths: other Pages sites share the origin and its caches.
 self.addEventListener("activate", (e) => {
   const scope = new URL(self.registration.scope).pathname;
   const simspace = new URL("simspace/", self.registration.scope).pathname;
